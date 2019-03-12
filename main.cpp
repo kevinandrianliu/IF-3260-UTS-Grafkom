@@ -53,8 +53,17 @@ int main(int argc, char** argv){
     rgb.g = 0;
     rgb.b = 0;
 
-    Line line(new Point(100,100), new Point(200,200));
+    Line line(new Point(100,100), new Point(100,100));
+
     line.render(fbp,vinfo,finfo);
+
+    // Polygon polygon;
+
+    // polygon.addPoint(new Point(100,100));
+    // polygon.addPoint(new Point(200,200));
+    // polygon.addPoint(new Point(300,300));
+
+    // polygon.render(fbp,vinfo,finfo);
 
     munmap(fbp, screensize);
     close(fbfd);

@@ -1,6 +1,7 @@
 #ifndef __OBJECTS_HPP__
 #define __OBJECTS_HPP__
 
+#include <vector>
 #include "util/class_util.h"
 #include "util/func_util.h"
 using namespace std;
@@ -36,6 +37,20 @@ class Line : public Object {
         Point * P1;
         Point * P2;
         struct RGB rgb;
+};
+
+class Polygon : public Object {
+    public:
+        Polygon();
+        ~Polygon();
+
+        vector<Point *> getPointVector();
+        
+        void addPoint(Point * P);
+        void render(char* fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
+
+    private:
+        vector<Point *> point_vector;
 };
 
 #endif
