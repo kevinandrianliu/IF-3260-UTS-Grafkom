@@ -5,6 +5,7 @@
 #include <linux/fb.h>
 #include <linux/input.h>
 #include <iostream>
+#include <fstream>
 #include <unistd.h>
 #include <ncurses.h>
 #include <cstdlib>
@@ -181,6 +182,25 @@ void drawMenuBar(WINDOW** menu_bar_options_window,WINDOW * menu_bar_window){
     }
 }
 
+void printToFile(char * filename){
+    vector<Line *> line;
+
+    line.push_back(new Line(new Point(100,100),new Point(200,200)));
+    line.push_back(new Line(new Point(1,1),new Point(2,2)));
+
+    ofstream file;
+    file.open("lines.txt");
+    
+    for (vector<Line *>::iterator it = line.begin(); it != line.end(); it++){
+        Point *P1 = (*it)->getP1();
+        Point *P2 = (*it)->getP2();
+
+        file << P1->getX() << ' ' << P1->getY() << '|' << P2->getX() << ' ' << P2->getY() << endl;
+    }
+
+    file.close();
+}
+
 void file_gui(char selection, int max_x_screen, int max_y_screen){
     if (selection < 0){
         return;
@@ -189,6 +209,7 @@ void file_gui(char selection, int max_x_screen, int max_y_screen){
     WINDOW * window = newwin(10,40,max_y_screen/2-5,max_x_screen/2-20);
     char dummy[100];
     char test[100];
+    memset(test,'\0',100);
 
     box(window,0,0);
     wbkgd(window,COLOR_PAIR(1));
@@ -215,12 +236,17 @@ void file_gui(char selection, int max_x_screen, int max_y_screen){
             mvwprintw(window,5,2,"                                    ");
             wrefresh(window);
             mvwscanw(window,5,2,test);
+            printToFile(test);
             wattroff(window,A_REVERSE);
             break;
         case(3):
             out = true;
             break;
     }
+
+    wbkgd(window,COLOR_BLACK);
+    wclear(window);
+    wrefresh(window);
     noecho();
 }
 

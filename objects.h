@@ -26,8 +26,8 @@ class Line : public Object {
         Line(Point * P1, Point * P2);
         ~Line();
         
-        Point getP1();
-        Point getP2();
+        Point* getP1();
+        Point* getP2();
         void setP1(Point* P1);
         void setP2(Point* P2);
         

@@ -37,11 +37,11 @@ Line::~Line(){
     cout << "Line destructor" << endl;
 }
         
-Point Line::getP1(){
-    return *P1;
+Point* Line::getP1(){
+    return P1;
 }
-Point Line::getP2(){
-    return *P2;
+Point* Line::getP2(){
+    return P2;
 }
 void Line::setP1(Point* P1){
     delete(P1);
