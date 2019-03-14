@@ -14,6 +14,7 @@
 
 #include "util/func_util.h"
 #include "objects.h"
+#include "objects_util.h"
 
 using namespace std;
 
@@ -257,6 +258,9 @@ int main(int argc, char** argv){
     long int screensize;
     char *fbp;
 
+    vector<Line *> line;
+    vector<Polygon *> polygon;
+
     fbfd = open("/dev/fb0", O_RDWR);
     if (fbfd == -1) {
         // Framebuffer can't be opened
@@ -412,6 +416,7 @@ int main(int argc, char** argv){
     endwin();
 
     munmap(fbp, screensize);
+
     close(fbfd);
 
     inputter.join();

@@ -33,6 +33,9 @@ class Line : public Object {
         
         void render(char* fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
         
+        void zoomIn(int k);
+        void zoomOut(int k);
+        void pan(int direction);
     private:
         Point * P1;
         Point * P2;
@@ -49,8 +52,10 @@ class Polygon : public Object {
         void addPoint(Point * P);
         void render(char* fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
 
+        void zoomIn(int k);
+        void zoomOut(int k);
+        void pan(int direction);
     private:
         vector<Point *> point_vector;
 };
-
 #endif
