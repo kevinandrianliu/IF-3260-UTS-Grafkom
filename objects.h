@@ -25,14 +25,14 @@ class Line : public Object {
     public:
         Line(Point * P1, Point * P2);
         ~Line();
-        
+
         Point getP1();
         Point getP2();
         void setP1(Point* P1);
         void setP2(Point* P2);
-        
+
         void render(char* fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
-        
+
     private:
         Point * P1;
         Point * P2;
@@ -45,7 +45,7 @@ class Polygon : public Object {
         ~Polygon();
 
         vector<Point *> getPointVector();
-        
+
         void addPoint(Point * P);
         void render(char* fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
 

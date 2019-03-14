@@ -18,6 +18,11 @@ void bresenham(int x0, int y0, int x1, int y1, struct RGB rgb, char colorful, ch
 void pixelColor(struct RGB rgb, char *fbp, long int location);
 
 char checkPixelAround(int x, int y, char * fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
+
 void rasterScan(int x_min, int y_min, int x_max, int y_max, struct RGB rgb, char * fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
+
+void save_lines(vector<Line&> lines);
+
+void save_polygons(vector<Polygon&> polygons);
 
 #endif

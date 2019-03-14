@@ -1,6 +1,9 @@
 #include "func_util.h"
 #include <cmath>
 #include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -183,4 +186,31 @@ void clear_screen(unsigned int x_size, unsigned int y_size, char * framebuffer, 
             *(framebuffer + mem_location + 3) = 0;
         }
     }
+}
+
+void save_lines(vector<Line&> lines) {
+
+    ofstream fout("lines.txt");
+    for(int i=0;i<lines.size();i++) {
+
+        Point p1 = lines[i].getP1();
+        Point p2 = lines[i].getP2();
+
+        fout << p1.getX() << " " << p1.getY() << " " << p2.getX() << " " << p2.getY() << endl;
+    }
+    fout.close();
+}
+
+void save_polygons(vector<Polygon&> polygons) {
+
+    ofstream fout("polygons.txt");
+    for(int i=0;i<polygons.size();i++) {
+
+        vector <Point*> pts = polygons[i].getPointVector();
+        for(int i=0;i<pts.size();i++) {
+            fout << pts[i].getX() << " " << pts[i].getY() << endl;
+        }
+        fout << endl;
+    }
+    fout.close();
 }

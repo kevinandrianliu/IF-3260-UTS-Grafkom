@@ -53,7 +53,11 @@ int main(int argc, char** argv){
     rgb.g = 0;
     rgb.b = 0;
 
+    //vector<Line> lines;
+    //vector<Polygon> polygons;
+
     Line line(new Point(100,100), new Point(100,100));
+    //lines.push_back(line);
 
     line.render(fbp,vinfo,finfo);
 
@@ -64,6 +68,8 @@ int main(int argc, char** argv){
     // polygon.addPoint(new Point(300,300));
 
     // polygon.render(fbp,vinfo,finfo);
+
+    //save_lines(lines);
 
     munmap(fbp, screensize);
     close(fbfd);
