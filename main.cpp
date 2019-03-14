@@ -15,6 +15,14 @@ using namespace std;
 #define clear() printf("\033[H\033[J")
 #define gotoxy(x,y) printf("\033[%d;%dH", (x), (y))
 
+vector<Line *> line;
+vector<Polygon *> polygon;
+
+void addLine(Line *l);
+void addPolygon();
+Line* selectLine(int i);
+void deleteLine(int i);
+
 int main(int argc, char** argv){
     int fbfd;
     struct fb_var_screeninfo vinfo;
@@ -53,9 +61,9 @@ int main(int argc, char** argv){
     rgb.g = 0;
     rgb.b = 0;
 
-    Line line(new Point(100,100), new Point(100,100));
+    // Line line(new Point(100,100), new Point(100,100));
 
-    line.render(fbp,vinfo,finfo);
+    // line.render(fbp,vinfo,finfo);
 
     // Polygon polygon;
 
@@ -65,7 +73,49 @@ int main(int argc, char** argv){
 
     // polygon.render(fbp,vinfo,finfo);
 
+    addLine(new Line(new Point(5,7), new Point(100,200)));
+
+    for (Line *e : line) {
+        e->render(fbp, vinfo, finfo);
+    }
+
+    Line *f = selectLine(0);
+    f->render(fbp, vinfo, finfo);
+
+    addPolygon();
+
+    for (Polygon *e : polygon) {
+        e->render(fbp, vinfo, finfo);
+    }
+
     munmap(fbp, screensize);
+
     close(fbfd);
     return 0;
+}
+
+void addLine(Line *l) {
+    line.push_back(l);
+}
+
+void addPolygon() {
+    int a, b;
+    polygon.push_back(new Polygon);
+    Polygon *p = polygon.back();
+    cout << "Input points, end with negative number:" << endl;
+    do {
+        cin >> a;
+        cin >> b;
+        if ((a > 0) && (b > 0)) {
+            p->addPoint(new Point(a,b));
+        }
+    } while ((a > 0) && (b > 0));
+}
+
+Line* selectLine(int i) {
+    return line[i];
+}
+
+void deleteLine(int i) {
+    
 }
