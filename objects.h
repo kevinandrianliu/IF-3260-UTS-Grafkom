@@ -1,3 +1,4 @@
+
 #ifndef __OBJECTS_HPP__
 #define __OBJECTS_HPP__
 
@@ -25,14 +26,17 @@ class Line : public Object {
     public:
         Line(Point * P1, Point * P2);
         ~Line();
-
-        Point getP1();
-        Point getP2();
+        
+        Point* getP1();
+        Point* getP2();
         void setP1(Point* P1);
         void setP2(Point* P2);
-
+        
         void render(char* fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
-
+        
+        void zoomIn(int k);
+        void zoomOut(int k);
+        void pan(int direction);
     private:
         Point * P1;
         Point * P2;
@@ -45,12 +49,14 @@ class Polygon : public Object {
         ~Polygon();
 
         vector<Point *> getPointVector();
-
+        
         void addPoint(Point * P);
         void render(char* fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
 
+        void zoomIn(int k);
+        void zoomOut(int k);
+        void pan(int direction);
     private:
         vector<Point *> point_vector;
 };
-
 #endif
