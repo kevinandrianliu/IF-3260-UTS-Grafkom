@@ -21,12 +21,11 @@ char menu_bar_selection = 0;
 int key_code = 0x00;
 bool refresh_screen = false;
 bool accessing_menu_bar = false;
+bool out = false;
 
 void userInput(int fd){
     ssize_t n;
     struct input_event ev;
-
-    bool out = false;
 
     while(1){
         n = read(fd, &ev, sizeof ev);
@@ -251,8 +250,88 @@ int main(int argc, char** argv){
             drawMenuBar(menu_bar_options_window,menu_bar_window);
             refresh_screen = false;
         }
+        
+        if (accessing_menu_bar && key_code == 28){
+            if (menu_bar_selection == 0){
+                switch(menu_bar_option_selection){
+                    case 0:
+                        // NEW
+                        break;
+                    case 1:
+                        // OPEN
+                        break;
+                    case 2:
+                        // SAVE
+                        break;
+                    case 3:
+                        out = true;
+                        break;
+                    default:
+                        break;
+                }
+            } else if (menu_bar_selection == 1){
+                switch(menu_bar_option_selection){
+                    case 0:
+                        // ZOOM IN
+                        break;
+                    case 1:
+                        // ZOOM OUT
+                        break;
+                    case 2:
+                        // PAN LEFT
+                        break;
+                    case 3:
+                        // PAN RIGHT
+                        break;
+                    case 4:
+                        // PAN TOP
+                        break;
+                    case 5:
+                        // PAN BOTTOM
+                        break;
+                    default:
+                        break;
+                }
+            } else if (menu_bar_selection == 2){
+                switch(menu_bar_option_selection){
+                    case 0:
+                        // COLOR
+                        break;
+                    case 1:
+                        // LINE THICKNESS
+                        break;
+                    case 2:
+                        // LINE STYLE
+                        break;
+                    default:
+                        break;
+                }
+            } else if (menu_bar_selection == 3){
+                switch(menu_bar_option_selection){
+                    case 0:
+                        // ADD LINE
+                        break;
+                    case 1:
+                        // ADD POLYGON
+                        break;
+                    case 2:
+                        // SELECT
+                        break;
+                    case 3:
+                        // DELETE
+                        break;
+                    default:
+                        break;
+                }
+            }
 
-        if (key_code == KEY_ESC){
+            // switch(menu_bar_selection + menu_bar_option_selection){
+            //     case()
+            // }
+            key_code = 0x00;
+        }
+
+        if (out){
             break;
         }
     }
