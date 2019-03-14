@@ -22,6 +22,8 @@ void addLine(Line *l);
 void addPolygon();
 Line* selectLine(int i);
 void deleteLine(int i);
+Polygon* selectPolygon(int i);
+void deletePolygon(int i);
 
 int main(int argc, char** argv){
     int fbfd;
@@ -73,8 +75,12 @@ int main(int argc, char** argv){
 
     // polygon.render(fbp,vinfo,finfo);
 
+    /*** BEGIN TESTING ***/
     addLine(new Line(new Point(5,7), new Point(100,200)));
+    addLine(new Line(new Point(40,18), new Point(400,200)));
+    addLine(new Line(new Point(63,127), new Point(30,700)));
 
+    cout << "Vector line" << endl;
     for (Line *e : line) {
         e->render(fbp, vinfo, finfo);
     }
@@ -82,11 +88,28 @@ int main(int argc, char** argv){
     Line *f = selectLine(0);
     f->render(fbp, vinfo, finfo);
 
-    addPolygon();
+    deleteLine(2);
+    cout << "New vector line" << endl;
+    for (Line *e : line) {
+        e->render(fbp, vinfo, finfo);
+    }
 
+    cout << "Input polygon 0" << endl;
+    addPolygon();
+    cout << "Input polygon 1" << endl;
+    addPolygon();
     for (Polygon *e : polygon) {
         e->render(fbp, vinfo, finfo);
     }
+
+    deletePolygon(0);
+    
+    cout << "New vector polygon" << endl;
+    for (Polygon *e : polygon) {
+        e->render(fbp, vinfo, finfo);
+    }
+
+    /*** END TESTING ***/
 
     munmap(fbp, screensize);
 
@@ -113,9 +136,21 @@ void addPolygon() {
 }
 
 Line* selectLine(int i) {
+    //Index start from 0
     return line[i];
 }
 
 void deleteLine(int i) {
-    
+    //Index start from 0
+    line.erase(line.begin() + i);
+}
+
+Polygon* selectPolygon(int i) {
+    //Index start from 0
+    return polygon[i];
+}
+
+void deletePolygon(int i) {
+    //Index start from 0
+    polygon.erase(polygon.begin() + i);
 }
