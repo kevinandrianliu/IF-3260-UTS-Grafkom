@@ -47,10 +47,10 @@ int getXMin(vector<Line *> *line, vector<Polygon *> *polygon) {
     vector<Polygon *>::iterator itp;
     for (itl = line->begin(); itl != line->end(); itl++) {
         Line *e = *itl;
-        if (x > e->getP1().getX()) {
-            x = e->getP1().getX();
-        } else if (x > e->getP2().getX()) {
-            x = e->getP2().getX();
+        if (x > e->getP1()->getX()) {
+            x = e->getP1()->getX();
+        } else if (x > e->getP2()->getX()) {
+            x = e->getP2()->getX();
         }
     }
     for (itp = polygon->begin(); itp != polygon->end(); itp++) {
@@ -72,10 +72,10 @@ int getYMin(vector<Line *> *line, vector<Polygon *> *polygon) {
     vector<Polygon *>::iterator itp;
     for (itl = line->begin(); itl != line->end(); itl++) {
         Line *e = *itl;
-        if (x > e->getP1().getY()) {
-            x = e->getP1().getY();
-        } else if (x > e->getP2().getY()) {
-            x = e->getP2().getY();
+        if (x > e->getP1()->getY()) {
+            x = e->getP1()->getY();
+        } else if (x > e->getP2()->getY()) {
+            x = e->getP2()->getY();
         }
     }
     for (itp = polygon->begin(); itp != polygon->end(); itp++) {
@@ -97,10 +97,10 @@ int getXMax(vector<Line *> *line, vector<Polygon *> *polygon) {
     vector<Polygon *>::iterator itp;
     for (itl = line->begin(); itl != line->end(); itl++) {
         Line *e = *itl;
-        if (x < e->getP1().getX()) {
-            x = e->getP1().getX();
-        } else if (x < e->getP2().getX()) {
-            x = e->getP2().getX();
+        if (x < e->getP1()->getX()) {
+            x = e->getP1()->getX();
+        } else if (x < e->getP2()->getX()) {
+            x = e->getP2()->getX();
         }
     }
     for (itp = polygon->begin(); itp != polygon->end(); itp++) {
@@ -123,10 +123,10 @@ int getYMax(vector<Line *> *line, vector<Polygon *> *polygon) {
     vector<Polygon *>::iterator itp;
     for (itl = line->begin(); itl != line->end(); itl++) {
         Line *e = *itl;
-        if (x < e->getP1().getY()) {
-            x = e->getP1().getY();
-        } else if (x < e->getP2().getY()) {
-            x = e->getP2().getY();
+        if (x < e->getP1()->getY()) {
+            x = e->getP1()->getY();
+        } else if (x < e->getP2()->getY()) {
+            x = e->getP2()->getY();
         }
     }
     for (itp = polygon->begin(); itp != polygon->end(); itp++) {
