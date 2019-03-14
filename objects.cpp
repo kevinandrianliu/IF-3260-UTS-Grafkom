@@ -9,9 +9,7 @@ Point::Point(int x, int y){
     this->x = x;
     this->y = y;
 }
-Point::~Point(){
-    cout << "Point destructor" << endl;
-}
+Point::~Point(){}
 
 int Point::getX(){
     return x;
@@ -34,7 +32,6 @@ Line::Line(Point * P1, Point * P2) : Object(){
 Line::~Line(){
     delete(P1);
     delete(P2);
-    cout << "Line destructor" << endl;
 }
         
 Point Line::getP1(){
@@ -43,6 +40,19 @@ Point Line::getP1(){
 Point Line::getP2(){
     return *P2;
 }
+
+struct RGB Line::getRGB(){
+    return rgb;
+}
+
+int Line::getDash(){
+	return dash;
+}
+
+int Line::getThickness(){
+	return thickness;
+}
+
 void Line::setP1(Point* P1){
     delete(P1);
     this->P1 = P1;
@@ -51,10 +61,20 @@ void Line::setP2(Point* P2){
     delete(P2);
     this->P2 = P2;
 }
+void Line::setRGB(RGB rgb){
+    this->rgb = rgb;
+}
+
+void Line::setDash(int dash){
+	this->dash = dash;
+}
+
+void Line::setThickness(int thickness){
+	this->thickness = thickness;
+}
         
 void Line::render(char* fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo){
-    cout << "Point 1: " << (*P1).getX() << "," << (*P1).getY() << endl;
-    cout << "Point 2: " << (*P2).getX() << "," << (*P2).getY() << endl;
+	bresenham((*P1).getX(), (*P1).getY(), (*P2).getX(), (*P2).getY(), rgb, dash, thickness, fbp, vinfo, finfo);
 }
 
 // **** POLYGON CLASS ****

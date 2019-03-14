@@ -28,8 +28,14 @@ class Line : public Object {
         
         Point getP1();
         Point getP2();
+	struct RGB getRGB();
+	int getDash();
+	int getThickness();
         void setP1(Point* P1);
         void setP2(Point* P2);
+	void setRGB(RGB rgb);
+	void setDash(int dash);
+	void setThickness(int thickness);
         
         void render(char* fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
         
@@ -37,6 +43,8 @@ class Line : public Object {
         Point * P1;
         Point * P2;
         struct RGB rgb;
+	int dash;
+	int thickness;
 };
 
 class Polygon : public Object {
