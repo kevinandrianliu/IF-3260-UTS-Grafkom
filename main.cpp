@@ -58,42 +58,44 @@ int main(int argc, char** argv){
     rgb.b = 0;
 
     /*** BEGIN TESTING ***/
-    addLine(&line, new Line(new Point(5,7), new Point(100,200)));
-    addLine(&line, new Line(new Point(40,18), new Point(400,200)));
-    addLine(&line, new Line(new Point(63,127), new Point(30,700)));
+    // addLine(&line, new Line(new Point(5,7), new Point(100,200)));
+    // addLine(&line, new Line(new Point(40,18), new Point(400,200)));
+    // addLine(&line, new Line(new Point(63,127), new Point(30,700)));
 
-    cout << "Vector line" << endl;
-    for (Line *e : line) {
-        cout << "Line" << endl;
-        e->render(fbp, vinfo, finfo);
-    }
+    // cout << "Vector line" << endl;
+    // for (Line *e : line) {
+    //     cout << "Line" << endl;
+    //     e->render(fbp, vinfo, finfo);
+    // }
 
-    Line *f = selectLine(&line, 0);
-    f->render(fbp, vinfo, finfo);
+    // Line *f = selectLine(&line, 0);
+    // f->render(fbp, vinfo, finfo);
 
-    deleteLine(&line, 2);
-    cout << "New vector line" << endl;
-    for (Line *e : line) {
-        e->render(fbp, vinfo, finfo);
-    }
+    // deleteLine(&line, 2);
+    // cout << "New vector line" << endl;
+    // for (Line *e : line) {
+    //     e->render(fbp, vinfo, finfo);
+    // }
 
-    cout << "Input polygon 0" << endl;
-    addPolygon(&polygon);
-    cout << "Input polygon 1" << endl;
-    addPolygon(&polygon);
-    for (Polygon *e : polygon) {
-        e->render(fbp, vinfo, finfo);
-    }
+    // cout << "Input polygon 0" << endl;
+    // addPolygon(&polygon);
+    // cout << "Input polygon 1" << endl;
+    // addPolygon(&polygon);
+    // for (Polygon *e : polygon) {
+    //     e->render(fbp, vinfo, finfo);
+    // }
 
-    deletePolygon(&polygon, 0);
+    // deletePolygon(&polygon, 0);
 
-    cout << "New vector polygon" << endl;
-    for (Polygon *e : polygon) {
-        e->render(fbp, vinfo, finfo);
-    }
+    // cout << "New vector polygon" << endl;
+    // for (Polygon *e : polygon) {
+    //     e->render(fbp, vinfo, finfo);
+    // }
 
-    int xmin = getXMin(&line, &polygon);
-    cout << xmin << endl;
+    // int xmin = getXMin(&line, &polygon);
+    // cout << xmin << endl;
+
+
 
     /*** END TESTING ***/
 
