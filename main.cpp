@@ -181,6 +181,49 @@ void drawMenuBar(WINDOW** menu_bar_options_window,WINDOW * menu_bar_window){
     }
 }
 
+void file_gui(char selection, int max_x_screen, int max_y_screen){
+    if (selection < 0){
+        return;
+    }
+
+    WINDOW * window = newwin(10,40,max_y_screen/2-5,max_x_screen/2-20);
+    char dummy[100];
+    char test[100];
+
+    box(window,0,0);
+    wbkgd(window,COLOR_PAIR(1));
+
+    wrefresh(window);
+    
+    mvscanw(30,30,dummy);
+
+    echo();
+    switch(selection){
+        case(0):
+            break;
+        case(1):
+            mvwprintw(window,3,11,"Enter file to open");
+            wattron(window,A_REVERSE);
+            mvwprintw(window,5,2,"                                    ");
+            wrefresh(window);
+            mvwscanw(window,5,2,test);
+            wattroff(window,A_REVERSE);
+            break;
+        case(2):
+            mvwprintw(window,3,13,"Enter filename");
+            wattron(window,A_REVERSE);
+            mvwprintw(window,5,2,"                                    ");
+            wrefresh(window);
+            mvwscanw(window,5,2,test);
+            wattroff(window,A_REVERSE);
+            break;
+        case(3):
+            out = true;
+            break;
+    }
+    noecho();
+}
+
 int main(int argc, char** argv){
     int fbfd;
     struct fb_var_screeninfo vinfo;
@@ -229,6 +272,7 @@ int main(int argc, char** argv){
     menu_bar_background.b = 204;
 
     initscr();
+    noecho();
     start_color();
     init_pair(1,COLOR_BLACK,COLOR_WHITE);
     init_pair(2,COLOR_WHITE,COLOR_RED);
@@ -253,17 +297,14 @@ int main(int argc, char** argv){
         
         if (accessing_menu_bar && key_code == 28){
             if (menu_bar_selection == 0){
-                switch(menu_bar_option_selection){
-                    case 0:
-                        // NEW
+                switch (menu_bar_option_selection){
+                    case(0):    // NEW
                         break;
-                    case 1:
-                        // OPEN
+                    case(1):    // OPEN
+                    case(2):    // SAVE
+                        file_gui(menu_bar_option_selection,max_x_screen,max_y_screen);
                         break;
-                    case 2:
-                        // SAVE
-                        break;
-                    case 3:
+                    case(3):    // EXIT
                         out = true;
                         break;
                     default:
