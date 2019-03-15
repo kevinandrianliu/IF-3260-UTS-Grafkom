@@ -170,9 +170,9 @@ void renderVerticalBar(vector<Line *> *line, vector<Polygon *> *polygon, struct 
 
         //Render inner scrollbar
         
-        int barWidth = SCRN_HEIGHT / viewWidth * SCRN_HEIGHT;
+        int barWidth = (SCRN_HEIGHT - 20)/ viewWidth * (SCRN_HEIGHT - 20);
 
-        int offsetBar = (0 - getYMin(line, polygon)) / viewWidth * SCRN_HEIGHT;
+        int offsetBar = (0 - getYMin(line, polygon)) / viewWidth * (SCRN_HEIGHT - 20);
 
         bresenham(SCRN_WIDTH-20, offsetBar, SCRN_WIDTH, offsetBar, rgb, framebuffer, vinfo, finfo);
         bresenham(SCRN_WIDTH-20, offsetBar+barWidth, SCRN_WIDTH, offsetBar+barWidth, rgb, framebuffer, vinfo, finfo);
