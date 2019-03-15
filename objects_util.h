@@ -1,6 +1,7 @@
 #ifndef __OBJECTS_UTIL_HPP__
 #define __OBJECTS_UTIL_HPP__
 #include <vector>
+#include <algorithm>
 #include "objects.h"
 #include "util/func_util.h"
 using namespace std;
@@ -19,6 +20,9 @@ int getXMin(vector<Line *> *line, vector<Polygon *> *polygon);
 int getYMin(vector<Line *> *line, vector<Polygon *> *polygon);
 int getXMax(vector<Line *> *line, vector<Polygon *> *polygon);
 int getXMax(vector<Line *> *line, vector<Polygon *> *polygon);
+
+/** POLYGON FILL **/
+void renderFillPolygon(Polygon* polygon, struct RGB rgb, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
 
 /** SCROLLBAR RENDER FUNCTION **/
 void renderHorizontalBar(vector<Line *> *line, vector<Polygon *> *polygon, struct RGB rgb, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);

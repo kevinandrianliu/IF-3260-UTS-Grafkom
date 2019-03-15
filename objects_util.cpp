@@ -222,3 +222,86 @@ bool parseToPoint(Point * point, char *P){
         return true;
     }
 }
+
+void renderFillPolygon(Polygon* polygon, struct RGB rgb, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo){
+    int size = polygon->getPointVector().size();
+    int x[size];
+    int y[size];
+
+    int i = 0;
+    for (Point *e : polygon->getPointVector()) {
+        x[i] = e->getX();
+        i++;
+    }
+
+    i = 0;
+    for (Point *e : polygon->getPointVector()) {
+        y[i] = e->getY();
+        i++;
+    }
+
+    //init reference tabel
+    float edgeTabel[size][4];
+    for (i = 0; i< size; i++){
+        if (x[i] != x[i+1]){
+            edgeTabel[i][1] = std::min(y[i], y[i+1]);
+            edgeTabel[i][2] = std::max(y[i], y[i+1]);
+            edgeTabel[i][3] = std::min(x[i], x[i+1]);
+            edgeTabel[i][4] = (x[i+1]-x[i])/(y[i+1]-y[i]);
+        }
+    }
+
+    vector< pair <int,int> > global_list;
+    for (i = 0; i< size; i++){
+        global_list.push_back(make_pair((int)edgeTabel[i][1],i)); //ymin & indeks tabel
+    }
+    sort(global_list.begin(), global_list.end());
+
+    //init y_scan value
+    int y_scan = std::min_element(y, y + size);
+
+    vector< pair <int,int> > active_list;
+
+    //while global or active list not empty
+    while ((global_list.size() > 0) || (active_list.size() > 0)) {
+
+        for (vector<pair <int,int>>::iterator it = global_list.begin(); it != global_list.end(); it++){
+            if (y_scan == it->first){ //y_scan = ymin di ref tabel
+                //input ke active list
+                i = it->second;
+                active_list.push_back(make_pair((int)edgeTabel[i][3],i)); //ymax & indeks tabel
+                //erase from global list
+                global_list.erase(it);
+            }        
+        }
+
+        //sort active list
+        sort(active_list.begin(), active_list.end());
+
+        for (int j = 0; j < active_list.size(); j+=2){
+            for (int x_scan = active_list[j].first; x_scan < active_list[j+1].first; x_scan++){
+                long int mem_location = (x_scan + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y_scan + vinfo.yoffset) * finfo.line_length;
+
+                pixelColor(rgb,framebuffer,mem_location);
+            }
+        }
+
+        y_scan++;
+
+        //update xval
+        int k;
+        for (vector<pair <int,int>>::iterator it = active_list.begin(); it != active_list.end(); it++){
+            k = it->second;
+            if(edgeTabel[k][2]+1 == y_scan){
+                //remove if ymax=y_scan
+                active_list.erase(it);
+            } else {
+                edgeTabel[k][3] =+ edgeTabel[k][4];
+                it->first = (int)edgeTabel[k][3]; 
+            }  
+        };
+        sort(active_list.begin(),active_list.end());
+
+    }  
+
+}
