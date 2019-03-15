@@ -7,7 +7,7 @@ using namespace std;
 // **** BRESENHAM ****
 
 // Draws a line between two points with Bresenham algorithm
-void bresenham(int x0, int y0, int x1, int y1, struct RGB rgb, char colorful, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo){
+void bresenham(int x0, int y0, int x1, int y1, struct RGB rgb, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo){
     // Swaps the points if first point is on the right of second point
     if (x0 > x1){
         int x_temp;

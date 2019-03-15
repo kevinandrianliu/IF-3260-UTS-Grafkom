@@ -202,55 +202,6 @@ void printToFile(char * filename){
     file.close();
 }
 
-void file_gui(char selection, int max_x_screen, int max_y_screen){
-    if (selection < 0){
-        return;
-    }
-
-    WINDOW * window = newwin(10,40,max_y_screen/2-5,max_x_screen/2-20);
-    char dummy[100];
-    char test[100];
-    memset(test,'\0',100);
-
-    box(window,0,0);
-    wbkgd(window,COLOR_PAIR(1));
-
-    wrefresh(window);
-    
-    mvscanw(30,30,dummy);
-
-    echo();
-    switch(selection){
-        case(0):
-            break;
-        case(1):
-            mvwprintw(window,3,11,"Enter file to open");
-            wattron(window,A_REVERSE);
-            mvwprintw(window,5,2,"                                    ");
-            wrefresh(window);
-            mvwscanw(window,5,2,test);
-            wattroff(window,A_REVERSE);
-            break;
-        case(2):
-            mvwprintw(window,3,13,"Enter filename");
-            wattron(window,A_REVERSE);
-            mvwprintw(window,5,2,"                                    ");
-            wrefresh(window);
-            mvwscanw(window,5,2,test);
-            printToFile(test);
-            wattroff(window,A_REVERSE);
-            break;
-        case(3):
-            out = true;
-            break;
-    }
-
-    wbkgd(window,COLOR_BLACK);
-    wclear(window);
-    wrefresh(window);
-    noecho();
-}
-
 int main(int argc, char** argv){
     int fbfd;
     struct fb_var_screeninfo vinfo;
@@ -296,10 +247,13 @@ int main(int argc, char** argv){
 
     thread inputter (userInput,fd);
 
-    struct RGB menu_bar_background;
-    menu_bar_background.r = 204;
-    menu_bar_background.g = 204;
-    menu_bar_background.b = 204;
+    struct RGB basic_color;
+    basic_color.r = 255;
+    basic_color.g = 255;
+    basic_color.b = 255;
+
+    vector<Line *> line_vector;
+    vector<Polygon *> polygon_vector;
 
     initscr();
     noecho();
@@ -317,52 +271,132 @@ int main(int argc, char** argv){
     menu_bar_options_window[3] = newwin(5,18,1,29);
     WINDOW * menu_bar_window = newwin(1,max_x_screen,0,0);
 
+    Line * selected_line = nullptr;
+    Polygon * selected_polygon = nullptr;
+
     clear();
     while(1){
         if (refresh_screen){
             clear();
             drawMenuBar(menu_bar_options_window,menu_bar_window);
             refresh_screen = false;
+
+            for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+                (*it)->render(fbp,vinfo,finfo);
+            }
+            for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+                (*it)->render(fbp,vinfo,finfo);
+            }
+            renderHorizontalBar(&line_vector,&polygon_vector,basic_color,fbp,vinfo,finfo);
+            renderVerticalBar(&line_vector,&polygon_vector,basic_color,fbp,vinfo,finfo);
         }
         
         if (accessing_menu_bar && key_code == 28){
             if (menu_bar_selection == 0){
+                WINDOW * window = newwin(10,40,max_y_screen/2-5,max_x_screen/2-20);
+                char dummy[100];
+                char test[100];
+                memset(test,'\0',100);
+
+                box(window,0,0);
+                wbkgd(window,COLOR_PAIR(1));
+
+                wrefresh(window);
+                mvscanw(30,30,dummy);
+
+                echo();
                 switch (menu_bar_option_selection){
                     case(0):    // NEW
                         break;
                     case(1):    // OPEN
-                    case(2):    // SAVE
-                        file_gui(menu_bar_option_selection,max_x_screen,max_y_screen);
+                    {
+                        mvwprintw(window,3,11,"Enter file to open");
+                        wattron(window,A_REVERSE);
+                        mvwprintw(window,5,2,"                                    ");
+                        wrefresh(window);
+                        mvwscanw(window,5,2,test);
+                        wattroff(window,A_REVERSE);
                         break;
+                    }
+                    case(2):    // SAVE
+                    {
+                        mvwprintw(window,3,13,"Enter filename");
+                        wattron(window,A_REVERSE);
+                        mvwprintw(window,5,2,"                                    ");
+                        wrefresh(window);
+                        mvwscanw(window,5,2,test);
+                        printToFile(test);
+                        wattroff(window,A_REVERSE);
+                        break;
+                    }
                     case(3):    // EXIT
                         out = true;
                         break;
                     default:
                         break;
                 }
+                noecho();
+                wbkgd(window,COLOR_BLACK);
+                wclear(window);
+                wrefresh(window);
             } else if (menu_bar_selection == 1){
                 switch(menu_bar_option_selection){
                     case 0:
-                        // ZOOM IN
+                        for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+                            (*it)->zoomIn(2);
+                        }
+                        for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+                            (*it)->zoomIn(2);
+                        }
                         break;
                     case 1:
-                        // ZOOM OUT
+                        for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+                            (*it)->zoomOut(2);
+                        }
+                        for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+                            (*it)->zoomOut(2);
+                        }
                         break;
                     case 2:
-                        // PAN LEFT
+                        for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+                            (*it)->pan(2);
+                        }
+                        for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+                            (*it)->pan(2);
+                        }
+                        // PAN LEFT 2
                         break;
                     case 3:
-                        // PAN RIGHT
+                        for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+                            (*it)->pan(1);
+                        }
+                        for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+                            (*it)->pan(1);
+                        }
+                        // PAN RIGHT 1
                         break;
                     case 4:
-                        // PAN TOP
+                        for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+                            (*it)->pan(3);
+                        }
+                        for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+                            (*it)->pan(3);
+                        }
+                        // PAN TOP 3
                         break;
                     case 5:
-                        // PAN BOTTOM
+                        for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+                            (*it)->pan(4);
+                        }
+                        for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+                            (*it)->pan(4);
+                        }
+                        // PAN BOTTOM 4
                         break;
                     default:
                         break;
                 }
+                refresh_screen = true;
             } else if (menu_bar_selection == 2){
                 switch(menu_bar_option_selection){
                     case 0:
@@ -378,28 +412,183 @@ int main(int argc, char** argv){
                         break;
                 }
             } else if (menu_bar_selection == 3){
+                WINDOW * window = newwin(10,40,max_y_screen/2-5,max_x_screen/2-20);
+                char dummy[100];
+                char P1[20];
+                char P2[20];
+                memset(P1, '\0', 20);
+                memset(P2, '\0', 20);
+
+                box(window,0,0);
+                wbkgd(window,COLOR_PAIR(1));
+
+                wrefresh(window);
+                mvscanw(30,30,dummy);
+
+                echo();
                 switch(menu_bar_option_selection){
                     case 0:
-                        // ADD LINE
+                    {
+                        mvwprintw(window,3,3,"Point 1: ");
+                        mvwprintw(window,5,3,"Point 2: ");
+                        wattron(window,A_REVERSE);
+                        mvwprintw(window,3,12,"            ");
+                        mvwprintw(window,5,12,"            ");
+                        wrefresh(window);
+                        mvwgetstr(window,3,12,P1);
+                        mvwgetstr(window,5,12,P2);
+
+                        Line * line = parseToLine(P1,P2);
+                        line_vector.push_back(line);
+                        
+                        wattroff(window,A_REVERSE);
+                        cout << "Point 1: " << (*line).getP1()->getX() << "," << (*line).getP1()->getY() << endl;
+                        cout << "Point 2: " << (*line).getP2()->getX() << "," << (*line).getP2()->getY() << endl;
                         break;
+                    }
                     case 1:
-                        // ADD POLYGON
+                    {   
+                        Polygon * polygon = new Polygon(basic_color);
+                        while(true){
+                            mvwprintw(window,3,3,"Point: ");
+                            wattron(window,A_REVERSE);
+                            mvwprintw(window,3,10,"            ");
+                            wrefresh(window);
+                            mvwgetstr(window,3,10,P1);
+
+                            Point * point = new Point(0,0);
+                            if (parseToPoint(point,P1)){
+                                polygon->addPoint(point);
+                                wattroff(window,A_REVERSE);
+                            } else {
+                                wattroff(window,A_REVERSE);
+                                break;
+                            }
+                        }
+                        polygon_vector.push_back(polygon);
                         break;
+                    }
                     case 2:
-                        // SELECT
+                    {
+                        bool exit_from_loop = false;
+                        char* text_container[2];
+                        text_container[0] = "Lines";
+                        text_container[1] = "Vector";
+                        
+                        int i = 0;
+                        int selection = 0;
+                        char selection_string[3];
+                        key_code = 0x00;
+                        while(1){
+                            werase(window);
+                            mvwprintw(window,3,3,"Going through: ");
+                            mvwprintw(window,3,19,text_container[i]);
+                            switch(key_code){
+                                case(KEY_TAB):
+                                {
+                                    selection = 0;
+                                    i = !i;
+                                    key_code = 0x00;
+                                    break;
+                                }
+                                case(105):
+                                {
+                                    selection--;
+
+                                    if (selection <= 0)
+                                        selection = 0;
+                                    key_code = 0x00;
+                                    break;
+                                }
+                                case(106):
+                                {
+                                    int size;
+                                    if (i == 0)
+                                        size = line_vector.size();
+                                    else
+                                        size = polygon_vector.size();
+                                    selection++;
+
+                                    if (selection >= size)
+                                        selection = size - 1;
+                                    key_code = 0x00;
+                                    break;
+                                }
+                                case(28):
+                                {
+                                    exit_from_loop = true;
+                                    key_code = 0x00;
+                                    break;
+                                }
+                                default:
+                                    key_code = 0x00;
+                                    break;
+                            }
+
+                            mvwprintw(window,5,3,"Index: ");
+                            sprintf(selection_string,"%d",selection);
+                            mvwprintw(window,5,19,selection_string);
+                            wrefresh(window);
+
+                            if (exit_from_loop)
+                                break;
+                        }
+                        if (i == 0){
+                            selected_line = selectLine(&line_vector,selection);
+                            selected_polygon = nullptr;
+                        } else {
+                            selected_polygon = selectPolygon(&polygon_vector,selection);
+                            selected_line = nullptr;
+                        }
                         break;
+                    }
                     case 3:
-                        // DELETE
+                        if (selected_line != nullptr){
+                            mvwprintw(window,3,3,"Deleted selected line");
+                            int position = 0;
+                            for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+                                if (selected_line == (*it))
+                                    break;
+                                else
+                                    position++;
+                            }
+
+                            deleteLine(&line_vector,position);
+                            delete(selected_line);
+                            selected_line = nullptr;
+                        } else if (selected_polygon != nullptr){
+                            mvwprintw(window,3,3,"Deleted selected polygon");
+                            int position = 0;
+                            for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+                                if (selected_polygon == (*it))
+                                    break;
+                                else
+                                    position++;
+                            }
+
+                            deletePolygon(&polygon_vector,position);
+                            delete(selected_polygon);
+                            selected_polygon = nullptr;
+                        }
+                        wrefresh(window);
                         break;
                     default:
                         break;
                 }
+                noecho();
+
+                wbkgd(window,COLOR_BLACK);
+                wclear(window);
+                wrefresh(window);
             }
 
-            // switch(menu_bar_selection + menu_bar_option_selection){
-            //     case()
-            // }
             key_code = 0x00;
+            for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+                (*it)->render(fbp,vinfo,finfo);
+            }
+            for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+                (*it)->render(fbp,vinfo,finfo);
+            }
         }
 
         if (out){
