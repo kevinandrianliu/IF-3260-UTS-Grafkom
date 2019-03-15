@@ -136,39 +136,47 @@ int getYMax(vector<Line *> *line, vector<Polygon *> *polygon) {
 }
 
 void renderHorizontalBar(vector<Line *> *line, vector<Polygon *> *polygon, struct RGB rgb, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo) {
-
-
-    //Render scrollbar box
-    bresenham(0, SCRN_HEIGHT, SCRN_WIDTH, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
-    bresenham(0, SCRN_HEIGHT-20, SCRN_WIDTH, SCRN_HEIGHT-20, rgb, framebuffer, vinfo, finfo);
-    bresenham(0, SCRN_HEIGHT-20, 0, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
-    bresenham(SCRN_WIDTH, SCRN_HEIGHT-20, SCRN_WIDTH, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
-
-    //Render inner scrollbar
     int viewWidth = getXMax(line, polygon) - getXMin(line, polygon);
-    int barWidth = SCRN_WIDTH / viewWidth * SCRN_WIDTH;
 
-    int offsetBar = (0 - getXMin(line, polygon)) / viewWidth * SCRN_WIDTH;
+    if (viewWidth > SCRN_WIDTH){
 
-    bresenham(offsetBar, SCRN_HEIGHT-20, offsetBar, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
-    bresenham(offsetBar + barWidth, SCRN_HEIGHT-20, offsetBar + barWidth, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
+        //Render scrollbar box
+        bresenham(0, SCRN_HEIGHT, SCRN_WIDTH, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
+        bresenham(0, SCRN_HEIGHT-20, SCRN_WIDTH, SCRN_HEIGHT-20, rgb, framebuffer, vinfo, finfo);
+        bresenham(0, SCRN_HEIGHT-20, 0, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
+        bresenham(SCRN_WIDTH, SCRN_HEIGHT-20, SCRN_WIDTH, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
+
+        //Render inner scrollbar
+        
+        int barWidth = SCRN_WIDTH / viewWidth * SCRN_WIDTH;
+
+        int offsetBar = (0 - getXMin(line, polygon)) / viewWidth * SCRN_WIDTH;
+
+        bresenham(offsetBar, SCRN_HEIGHT-20, offsetBar, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
+        bresenham(offsetBar + barWidth, SCRN_HEIGHT-20, offsetBar + barWidth, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
+    }
 }
 
 void renderVerticalBar(vector<Line *> *line, vector<Polygon *> *polygon, struct RGB rgb, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo) {
-    //Render scrollbar box
-    bresenham(SCRN_WIDTH, 0, SCRN_WIDTH, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
-    bresenham(SCRN_WIDTH-20, 0, SCRN_WIDTH-20, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
-    bresenham(SCRN_WIDTH, SCRN_HEIGHT, SCRN_WIDTH-20, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
-    bresenham(SCRN_WIDTH-20, 0, SCRN_WIDTH, 0, rgb, framebuffer, vinfo, finfo);
-
-    //Render inner scrollbar
     int viewWidth = getYMax(line, polygon) - getYMin(line, polygon);
-    int barWidth = SCRN_HEIGHT / viewWidth * SCRN_HEIGHT;
 
-    int offsetBar = (0 - getYMin(line, polygon)) / viewWidth * SCRN_HEIGHT;
+    if (viewWidth > SCRN_HEIGHT){
 
-    bresenham(SCRN_WIDTH-20, offsetBar, SCRN_WIDTH, offsetBar, rgb, framebuffer, vinfo, finfo);
-    bresenham(SCRN_WIDTH-20, offsetBar+barWidth, SCRN_WIDTH, offsetBar+barWidth, rgb, framebuffer, vinfo, finfo);
+        //Render scrollbar box
+        bresenham(SCRN_WIDTH, 0, SCRN_WIDTH, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
+        bresenham(SCRN_WIDTH-20, 0, SCRN_WIDTH-20, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
+        bresenham(SCRN_WIDTH, SCRN_HEIGHT, SCRN_WIDTH-20, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
+        bresenham(SCRN_WIDTH-20, 0, SCRN_WIDTH, 0, rgb, framebuffer, vinfo, finfo);
+
+        //Render inner scrollbar
+        
+        int barWidth = (SCRN_HEIGHT - 20)/ viewWidth * (SCRN_HEIGHT - 20);
+
+        int offsetBar = (0 - getYMin(line, polygon)) / viewWidth * (SCRN_HEIGHT - 20);
+
+        bresenham(SCRN_WIDTH-20, offsetBar, SCRN_WIDTH, offsetBar, rgb, framebuffer, vinfo, finfo);
+        bresenham(SCRN_WIDTH-20, offsetBar+barWidth, SCRN_WIDTH, offsetBar+barWidth, rgb, framebuffer, vinfo, finfo);
+    }
 }
 
 Line* parseToLine(char * P1, char * P2){
