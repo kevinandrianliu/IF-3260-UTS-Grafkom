@@ -611,12 +611,12 @@ int main(int argc, char** argv){
 
             key_code = 0x00;
 
-            for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
-                (*it)->render(fbp,vinfo,finfo);
-            }
-            for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
-                (*it)->render(fbp,vinfo,finfo);
-            }
+            // for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+            //     (*it)->render(fbp,vinfo,finfo);
+            // }
+            // for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+            //     (*it)->render(fbp,vinfo,finfo);
+            // }
 
             if (selected_line != nullptr){
                 ofstream file;
