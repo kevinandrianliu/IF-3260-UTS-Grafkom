@@ -141,6 +141,27 @@ void bresenham(int x0, int y0, int x1, int y1, struct RGB rgb, int dash, int thi
 				}
 		    }
 		}
+    } else if((y1-y0)==0){
+        int ymin = y1-thickness < 0? 0:x1-thickness;
+		int ymax = y1+thickness > 768? 768:x1+thickness; 
+		for (int i = ymin; i < ymax; i++){ 
+		    for (int x = x0; x <= x1; x++){
+				if(dash!=0){
+					counter++;
+				    long int mem_location = (x + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (i + vinfo.yoffset) * finfo.line_length;
+		            if(draw){
+		    			pixelColor(rgb,framebuffer,mem_location);
+					}
+					if(counter % dash == 0){
+						draw = !draw;
+					}
+				}
+				else {
+					long int mem_location = (x + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (i + vinfo.yoffset) * finfo.line_length;
+					pixelColor(rgb,framebuffer,mem_location);
+				}
+		    }
+		}
     } else {
         float gradien = (y1 - y0)/(x1 - x0);
         if ((abs(gradien) >= 0) && (abs(gradien) <= 1)){
