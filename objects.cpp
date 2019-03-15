@@ -30,6 +30,8 @@ void Point::setY(int y){
 Line::Line(Point * P1, Point * P2) : Object(){
     this->P1 = P1;
     this->P2 = P2;
+    dash = 0;
+    thickness = 1;
 }
 Line::~Line(){
     delete(P1);
@@ -73,9 +75,6 @@ void Line::setDash(int dash){
 
 void Line::setThickness(int thickness){
 	this->thickness = thickness;
-}
-void Line::setRGB(struct RGB rgb){
-    this->rgb = rgb;
 }
         
 void Line::render(char* fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo){
