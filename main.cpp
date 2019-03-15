@@ -454,8 +454,8 @@ int main(int argc, char** argv){
                                     {
                                         selection++;
 
-                                        if (selection >= 3)
-                                            selection = 3;
+                                        if (selection >= 7)
+                                            selection = 7;
                                         key_code = 0x00;
                                         break;
                                     }
