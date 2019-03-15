@@ -573,7 +573,54 @@ int main(int argc, char** argv){
                         }
                         break;
                     case 2:
-                        // LINE STYLE
+                        if (selected_line != nullptr){
+                            key_code = 0x00;
+                            int dash = selected_line->getDash();
+                            char dash_string[2];
+                            bool exit_from_loop = false;
+
+                            while(1){
+                                werase(window);
+                                mvwprintw(window,3,3,"Dash: ");
+                                sprintf(dash_string,"%d",dash);
+                                mvwprintw(window,3,9,dash_string);
+                                switch(key_code){
+                                    case(105):
+                                    {
+                                        dash--;
+
+                                        if (dash <= 0)
+                                            dash = 0;
+                                        key_code = 0x00;
+                                        break;
+                                    }
+                                    case(106):
+                                    {
+                                        dash++;
+
+                                        if (dash >= 5)
+                                            dash = 5;
+                                        key_code = 0x00;
+                                        break;
+                                    }
+                                    case(28):
+                                    {
+                                        exit_from_loop = true;
+                                        key_code = 0x00;
+                                        break;
+                                    }
+                                    default:
+                                        key_code = 0x00;
+                                        break;
+                                }
+                                wrefresh(window);
+
+                                if (exit_from_loop)
+                                    break;
+                            }
+
+                            selected_line->setDash(dash);
+                        }
                         break;
                     default:
                         break;
