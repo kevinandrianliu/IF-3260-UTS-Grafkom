@@ -43,6 +43,9 @@ Point* Line::getP1(){
 Point* Line::getP2(){
     return P2;
 }
+struct RGB Line::getRGB(){
+    return rgb;
+}
 void Line::setP1(Point* P1){
     delete(P1);
     this->P1 = P1;
@@ -51,10 +54,12 @@ void Line::setP2(Point* P2){
     delete(P2);
     this->P2 = P2;
 }
+void Line::setRGB(struct RGB rgb){
+    this->rgb = rgb;
+}
         
 void Line::render(char* fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo){
-    cout << "Point 1: " << (*P1).getX() << "," << (*P1).getY() << endl;
-    cout << "Point 2: " << (*P2).getX() << "," << (*P2).getY() << endl;
+    bresenham(P1->getX(),P1->getY(),P2->getX(),P2->getY(),rgb,fbp,vinfo,finfo);
 }
 
 void Line::zoomIn(int k){
@@ -96,13 +101,20 @@ Polygon::~Polygon(){
 vector<Point *> Polygon::getPointVector(){
     return point_vector;
 }
-        
+
+struct RGB Polygon::getRGB(){
+    return rgb;
+}
+void Polygon::setRGB(struct RGB rgb){
+    this->rgb = rgb;
+}
+
 void Polygon::addPoint(Point * P){
     point_vector.push_back(P);
 }
 void Polygon::render(char* fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo){
-    for (vector<Point *>::iterator it = point_vector.begin(); it != point_vector.end(); it++){
-        cout << (*it)->getX() << "," << (*it)->getY() << endl;
+    for (int i = 1; i < point_vector.size(); i++){
+        bresenham(point_vector[i]->getX(),point_vector[i]->getY(),point_vector[i]->getX(),point_vector[i]->getY(),rgb,fbp,vinfo,finfo);
     }
 }
 

@@ -13,7 +13,7 @@ struct RGB {
 
 void clear_screen(unsigned int x_size, unsigned int y_size, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
 
-void bresenham(int x0, int y0, int x1, int y1, struct RGB rgb, char colorful, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
+void bresenham(int x0, int y0, int x1, int y1, struct RGB rgb, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
 
 void pixelColor(struct RGB rgb, char *fbp, long int location);
 

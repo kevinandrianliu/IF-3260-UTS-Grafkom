@@ -28,8 +28,10 @@ class Line : public Object {
         
         Point* getP1();
         Point* getP2();
+        struct RGB getRGB();
         void setP1(Point* P1);
         void setP2(Point* P2);
+        void setRGB(struct RGB rgb);
         
         void render(char* fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
         
@@ -49,6 +51,9 @@ class Polygon : public Object {
 
         vector<Point *> getPointVector();
         
+        struct RGB getRGB();
+        void setRGB(struct RGB rgb);
+
         void addPoint(Point * P);
         void render(char* fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
 
@@ -56,6 +61,7 @@ class Polygon : public Object {
         void zoomOut(int k);
         void pan(int direction);
     private:
+        struct RGB rgb;
         vector<Point *> point_vector;
 };
 #endif
