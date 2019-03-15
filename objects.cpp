@@ -46,6 +46,15 @@ Point* Line::getP2(){
 struct RGB Line::getRGB(){
     return rgb;
 }
+
+int Line::getDash(){
+	return dash;
+}
+
+int Line::getThickness(){
+	return thickness;
+}
+
 void Line::setP1(Point* P1){
     delete(P1);
     this->P1 = P1;
@@ -53,13 +62,24 @@ void Line::setP1(Point* P1){
 void Line::setP2(Point* P2){
     delete(P2);
     this->P2 = P2;
+}    
+void Line::setRGB(struct RGB rgb){
+    this->rgb = rgb;
+}
+
+void Line::setDash(int dash){
+	this->dash = dash;
+}
+
+void Line::setThickness(int thickness){
+	this->thickness = thickness;
 }
 void Line::setRGB(struct RGB rgb){
     this->rgb = rgb;
 }
         
 void Line::render(char* fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo){
-    bresenham(P1->getX(),P1->getY(),P2->getX(),P2->getY(),rgb,fbp,vinfo,finfo);
+	bresenham((*P1).getX(), (*P1).getY(), (*P2).getX(), (*P2).getY(), rgb, dash, thickness, fbp, vinfo, finfo);
 }
 
 void Line::zoomIn(int k){

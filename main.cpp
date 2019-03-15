@@ -9,9 +9,10 @@
 #include <unistd.h>
 #include <ncurses.h>
 #include <cstdlib>
-#include <cstring>
 #include <thread>
-
+#include <cstring>
+#include <ctime>
+#include <mutex>
 #include "util/func_util.h"
 #include "objects.h"
 #include "objects_util.h"
@@ -208,6 +209,12 @@ int main(int argc, char** argv){
     struct fb_fix_screeninfo finfo;
     long int screensize;
     char *fbp;
+	char c;
+	string prev_color;
+	int prev_dash;
+	int prev_thickness;
+	mutex mtx;
+	bool hasRendered=true;
 
     vector<Line *> line;
     vector<Polygon *> polygon;
@@ -237,10 +244,9 @@ int main(int argc, char** argv){
         // Mapping failed
         exit(4);
     }
-
-    const char * dev = "/dev/input/event4";
-    int fd = open(dev,O_RDONLY);
-    if (fd == -1){
+	const char *dev = "/dev/input/event2";
+    int fd = open(dev, O_RDONLY);
+    if (fd == -1) {
         fprintf(stderr, "Cannot open %s: %s.\n", dev, strerror(errno));
         return EXIT_FAILURE;
     }
