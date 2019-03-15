@@ -9,9 +9,16 @@
 #include <unistd.h>
 #include <ncurses.h>
 #include <cstdlib>
+<<<<<<< HEAD
 #include <cstring>
 #include <thread>
 
+=======
+#include <thread>
+#include <cstring>
+#include <ctime>
+#include <mutex>
+>>>>>>> aa9b2a0c6bb04f8a4dacd1eb5ff7867229acfb64
 #include "util/func_util.h"
 #include "objects.h"
 #include "objects_util.h"
@@ -251,12 +258,76 @@ void file_gui(char selection, int max_x_screen, int max_y_screen){
     noecho();
 }
 
+string color = "white";
+int dash = 0;
+int thickness = 1;
+bool quit =  false;
+
+void userInput(int fd){
+    ssize_t n;
+    struct input_event ev;
+
+    while(!quit){
+        n = read(fd, &ev, sizeof ev);
+        if (n == (ssize_t)-1) {
+            if (errno == EINTR)
+                continue;
+            else
+                break;
+        } else if (n != sizeof ev) {
+            errno = EIO;
+            break;
+        }
+        if (ev.type == EV_KEY && ev.value >= 0 && ev.value <= 2){
+            if (ev.value == 1){
+                if ((ev.code  == 105) && (dash >= 1)){ // left key
+                    dash--;
+                } else if ((ev.code == 106) && (dash < 5)){ // right key
+                    dash++;
+                } else if ((ev.code == 103) && (thickness < 3)){ // up key
+                    thickness++;
+                } else if ((ev.code == 108) && (thickness > 1)){ // down key
+                    thickness--;
+                } else if (ev.code == KEY_G){
+                    color = "green";
+                } else if (ev.code == KEY_B){
+                    color = "blue";
+                } else if (ev.code == KEY_R){
+                    color = "red";
+                } else if (ev.code == KEY_T){
+                    color = "turquoise";
+                } else if (ev.code == KEY_P){
+                    color = "purple";
+                } else if (ev.code == KEY_W){
+                    color = "white";
+                } else if (ev.code == KEY_Y){
+                    color = "yellow";
+                } else if (ev.code == KEY_O){
+                    color = "orange";
+                } else if (ev.code == KEY_M){
+                    color = "magenta";
+                } else if (ev.code == KEY_Q){
+					quit = true;
+				}
+				//cout << "Dash in input : " << dash << "\n";
+				cout << "Thickness in input : " << thickness << "\n";
+            }
+        }
+    }
+}
+
 int main(int argc, char** argv){
     int fbfd;
     struct fb_var_screeninfo vinfo;
     struct fb_fix_screeninfo finfo;
     long int screensize;
     char *fbp;
+	char c;
+	string prev_color;
+	int prev_dash;
+	int prev_thickness;
+	mutex mtx;
+	bool hasRendered=true;
 
     vector<Line *> line;
     vector<Polygon *> polygon;
@@ -286,140 +357,101 @@ int main(int argc, char** argv){
         // Mapping failed
         exit(4);
     }
-
-    const char * dev = "/dev/input/event4";
-    int fd = open(dev,O_RDONLY);
-    if (fd == -1){
+	const char *dev = "/dev/input/event2";
+    int fd = open(dev, O_RDONLY);
+    if (fd == -1) {
         fprintf(stderr, "Cannot open %s: %s.\n", dev, strerror(errno));
         return EXIT_FAILURE;
     }
+	struct timespec delay;      // delay variable
+    delay.tv_sec = 0;
+    delay.tv_nsec = 10000000;
 
-    thread inputter (userInput,fd);
+	thread inputter (userInput,fd);
+	clear_screen(1024,768,fbp,vinfo,finfo);
+	
+	struct RGB rgb;
+	while(!quit){
+		//cout << "Thickness in output : " << dash << "\n";
+		//cout << "Previous Thickness in output : " << prev_dash << "\n";
+		if(color=="white"){
+			rgb.r = 255;
+			rgb.g = 255;
+			rgb.b = 255;
+		}
+		else if(color=="green"){
+			rgb.r = 0;
+			rgb.g = 255;
+			rgb.b = 0;
+		}
+		else if(color=="blue"){
+			rgb.r = 0;
+			rgb.g = 0;
+			rgb.b = 255;
+		}
+		else if(color=="red"){
+			rgb.r = 255;
+			rgb.g = 0;
+			rgb.b = 0;
+		}
+		else if(color=="yellow"){
+			rgb.r = 255;
+			rgb.g = 255;
+			rgb.b = 0;
+		}
+		else if(color=="magenta"){
+			rgb.r = 255;
+			rgb.g = 0;
+			rgb.b = 255;
+		}
+		else if(color=="purple"){
+			rgb.r = 128;
+			rgb.g = 0;
+			rgb.b = 128;
+		}
+		else if(color=="turqoise"){
+			rgb.r = 64;
+			rgb.g = 224;
+			rgb.b = 208;
+		}
+		else if(color=="orange"){
+			rgb.r = 255;
+			rgb.g = 99;
+			rgb.b = 71;
+		}
+		Point *P1 = new Point(100,100);
+		Point *P2 = new Point(200,200);
+		Line* line = new Line(P1, P2);
+		/*if(((color!=prev_color) or (dash != prev_dash) or (thickness != prev_thickness)) and (hasRendered)){
+			color = prev_color;
+			dash = prev_dash;
+			thickness = prev_thickness;
+		}*/
+		line->setRGB(rgb);
+		line->setDash(dash);
+		line->setThickness(thickness);
+		line->render(fbp, vinfo, finfo);
+		//hasRendered=true;
+		mtx.lock();
+		prev_color = color;
+		prev_dash = dash;
+		prev_thickness = thickness;
+		mtx.unlock();
+		if((color!=prev_color) or (dash != prev_dash) or (thickness != prev_thickness)){
+			clear_screen(1024,768,fbp,vinfo,finfo);
+			//hasRendered=false;
+		}
+		delete(line);
+	}
+	// Polygon polygon;
 
-    struct RGB menu_bar_background;
-    menu_bar_background.r = 204;
-    menu_bar_background.g = 204;
-    menu_bar_background.b = 204;
+	// polygon.addPoint(new Point(100,100));
+	// polygon.addPoint(new Point(200,200));
+	// polygon.addPoint(new Point(300,300));
 
-    initscr();
-    noecho();
-    start_color();
-    init_pair(1,COLOR_BLACK,COLOR_WHITE);
-    init_pair(2,COLOR_WHITE,COLOR_RED);
-
-    int max_x_screen, max_y_screen;
-    getmaxyx(stdscr,max_y_screen,max_x_screen);
-
-    WINDOW ** menu_bar_options_window = (WINDOW**) malloc (4*sizeof(WINDOW*));
-    menu_bar_options_window[0] = newwin(5,18,1,0);
-    menu_bar_options_window[1] = newwin(7,18,1,8);
-    menu_bar_options_window[2] = newwin(4,18,1,16);
-    menu_bar_options_window[3] = newwin(5,18,1,29);
-    WINDOW * menu_bar_window = newwin(1,max_x_screen,0,0);
-
-    clear();
-    while(1){
-        if (refresh_screen){
-            clear();
-            drawMenuBar(menu_bar_options_window,menu_bar_window);
-            refresh_screen = false;
-        }
-        
-        if (accessing_menu_bar && key_code == 28){
-            if (menu_bar_selection == 0){
-                switch (menu_bar_option_selection){
-                    case(0):    // NEW
-                        break;
-                    case(1):    // OPEN
-                    case(2):    // SAVE
-                        file_gui(menu_bar_option_selection,max_x_screen,max_y_screen);
-                        break;
-                    case(3):    // EXIT
-                        out = true;
-                        break;
-                    default:
-                        break;
-                }
-            } else if (menu_bar_selection == 1){
-                switch(menu_bar_option_selection){
-                    case 0:
-                        // ZOOM IN
-                        break;
-                    case 1:
-                        // ZOOM OUT
-                        break;
-                    case 2:
-                        // PAN LEFT
-                        break;
-                    case 3:
-                        // PAN RIGHT
-                        break;
-                    case 4:
-                        // PAN TOP
-                        break;
-                    case 5:
-                        // PAN BOTTOM
-                        break;
-                    default:
-                        break;
-                }
-            } else if (menu_bar_selection == 2){
-                switch(menu_bar_option_selection){
-                    case 0:
-                        // COLOR
-                        break;
-                    case 1:
-                        // LINE THICKNESS
-                        break;
-                    case 2:
-                        // LINE STYLE
-                        break;
-                    default:
-                        break;
-                }
-            } else if (menu_bar_selection == 3){
-                switch(menu_bar_option_selection){
-                    case 0:
-                        // ADD LINE
-                        break;
-                    case 1:
-                        // ADD POLYGON
-                        break;
-                    case 2:
-                        // SELECT
-                        break;
-                    case 3:
-                        // DELETE
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            // switch(menu_bar_selection + menu_bar_option_selection){
-            //     case()
-            // }
-            key_code = 0x00;
-        }
-
-        if (out){
-            break;
-        }
-    }
-
-    delwin(menu_bar_options_window[0]);
-    delwin(menu_bar_options_window[1]);
-    delwin(menu_bar_options_window[2]);
-    delwin(menu_bar_options_window[3]);
-    
-    free(menu_bar_options_window);
-    endwin();
-
-    munmap(fbp, screensize);
-
-    close(fbfd);
-
-    inputter.join();
-
+	// polygon.render(fbp,vinfo,finfo);
+	munmap(fbp, screensize);
+	close(fbfd);
+	inputter.join();
     return 0;
 }
