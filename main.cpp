@@ -287,6 +287,8 @@ int main(int argc, char** argv){
             for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
                 (*it)->render(fbp,vinfo,finfo);
             }
+            renderHorizontalBar(&line_vector,&polygon_vector,basic_color,fbp,vinfo,finfo);
+            renderVerticalBar(&line_vector,&polygon_vector,basic_color,fbp,vinfo,finfo);
         }
         
         if (accessing_menu_bar && key_code == 28){
@@ -340,26 +342,61 @@ int main(int argc, char** argv){
             } else if (menu_bar_selection == 1){
                 switch(menu_bar_option_selection){
                     case 0:
-                        // ZOOM IN
+                        for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+                            (*it)->zoomIn(2);
+                        }
+                        for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+                            (*it)->zoomIn(2);
+                        }
                         break;
                     case 1:
-                        // ZOOM OUT
+                        for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+                            (*it)->zoomOut(2);
+                        }
+                        for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+                            (*it)->zoomOut(2);
+                        }
                         break;
                     case 2:
-                        // PAN LEFT
+                        for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+                            (*it)->pan(2);
+                        }
+                        for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+                            (*it)->pan(2);
+                        }
+                        // PAN LEFT 2
                         break;
                     case 3:
-                        // PAN RIGHT
+                        for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+                            (*it)->pan(1);
+                        }
+                        for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+                            (*it)->pan(1);
+                        }
+                        // PAN RIGHT 1
                         break;
                     case 4:
-                        // PAN TOP
+                        for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+                            (*it)->pan(3);
+                        }
+                        for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+                            (*it)->pan(3);
+                        }
+                        // PAN TOP 3
                         break;
                     case 5:
-                        // PAN BOTTOM
+                        for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+                            (*it)->pan(4);
+                        }
+                        for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+                            (*it)->pan(4);
+                        }
+                        // PAN BOTTOM 4
                         break;
                     default:
                         break;
                 }
+                refresh_screen = true;
             } else if (menu_bar_selection == 2){
                 switch(menu_bar_option_selection){
                     case 0:

@@ -6,7 +6,7 @@
 using namespace std;
 
 #define SCRN_WIDTH 1024
-#define SCRN_HEIGHT 768
+#define SCRN_HEIGHT 762
 
 /** VECTOR PROCESSING FUNCTION **/
 void addLine(vector<Line *> *line, Line *l);
@@ -21,8 +21,8 @@ int getXMax(vector<Line *> *line, vector<Polygon *> *polygon);
 int getXMax(vector<Line *> *line, vector<Polygon *> *polygon);
 
 /** SCROLLBAR RENDER FUNCTION **/
-void renderHorizontalBar(vector<Line *> *line, vector<Polygon *> *polygon, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
-void renderVerticalBar(vector<Line *> *line, vector<Polygon *> *polygon, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
+void renderHorizontalBar(vector<Line *> *line, vector<Polygon *> *polygon, struct RGB rgb, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
+void renderVerticalBar(vector<Line *> *line, vector<Polygon *> *polygon, struct RGB rgb, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
 
 /** STRING PARSING **/
 Line* parseToLine(char * P1, char * P2);
