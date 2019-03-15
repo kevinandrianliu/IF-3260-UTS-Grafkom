@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <ncurses.h>
+#include <algorithm>
 
 using namespace std;
 
@@ -92,7 +93,8 @@ int getXMax(vector<Line *> *line, vector<Polygon *> *polygon) {
         Line *e = *itl;
         if (x < e->getP1()->getX()) {
             x = e->getP1()->getX();
-        } else if (x < e->getP2()->getX()) {
+        }
+        if (x < e->getP2()->getX()) {
             x = e->getP2()->getX();
         }
     }
@@ -101,7 +103,8 @@ int getXMax(vector<Line *> *line, vector<Polygon *> *polygon) {
         for (Point *e : t->getPointVector()) {
             if (x < e->getX()) {
                 x = e->getX();
-            } else if (x < e->getX()) {
+            }
+            if (x < e->getX()) {
                 x = e->getX();
             }
         }
@@ -116,9 +119,11 @@ int getYMax(vector<Line *> *line, vector<Polygon *> *polygon) {
     vector<Polygon *>::iterator itp;
     for (itl = line->begin(); itl != line->end(); itl++) {
         Line *e = *itl;
+        // cout << e->getP2()->getY() << endl;
         if (x < e->getP1()->getY()) {
             x = e->getP1()->getY();
-        } else if (x < e->getP2()->getY()) {
+        }
+        if (x < e->getP2()->getY()) {
             x = e->getP2()->getY();
         }
     }
@@ -127,7 +132,8 @@ int getYMax(vector<Line *> *line, vector<Polygon *> *polygon) {
         for (Point *e : t->getPointVector()) {
             if (x < e->getY()) {
                 x = e->getY();
-            } else if (x < e->getY()) {
+            }
+            if (x < e->getY()) {
                 x = e->getY();
             }
         }
@@ -136,7 +142,7 @@ int getYMax(vector<Line *> *line, vector<Polygon *> *polygon) {
 }
 
 void renderHorizontalBar(vector<Line *> *line, vector<Polygon *> *polygon, struct RGB rgb, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo) {
-    int viewWidth = getXMax(line, polygon) - getXMin(line, polygon);
+    int viewWidth = max(getXMax(line, polygon),SCRN_WIDTH) - min(getXMin(line, polygon),0);
 
     if (viewWidth > SCRN_WIDTH){
 
@@ -148,9 +154,15 @@ void renderHorizontalBar(vector<Line *> *line, vector<Polygon *> *polygon, struc
 
         //Render inner scrollbar
         
-        int barWidth = SCRN_WIDTH / viewWidth * SCRN_WIDTH;
+        float temp =  (float) (SCRN_WIDTH)/ (float) viewWidth;
+        int barWidth = (int) (temp * (float) SCRN_WIDTH);
 
-        int offsetBar = (0 - getXMin(line, polygon)) / viewWidth * SCRN_WIDTH;
+
+        temp = (float) getXMin(line, polygon)/ (float) viewWidth;
+        int offsetBar = 0 -  (int)( temp * (float) SCRN_WIDTH);
+        if (offsetBar < 0) {
+            offsetBar = 0;
+        }
 
         bresenham(offsetBar, SCRN_HEIGHT-20, offsetBar, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
         bresenham(offsetBar + barWidth, SCRN_HEIGHT-20, offsetBar + barWidth, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
@@ -158,21 +170,27 @@ void renderHorizontalBar(vector<Line *> *line, vector<Polygon *> *polygon, struc
 }
 
 void renderVerticalBar(vector<Line *> *line, vector<Polygon *> *polygon, struct RGB rgb, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo) {
-    int viewWidth = getYMax(line, polygon) - getYMin(line, polygon);
+    int viewWidth = max(getYMax(line, polygon),SCRN_HEIGHT) - min(getYMin(line, polygon),0);
+    
 
     if (viewWidth > SCRN_HEIGHT){
 
         //Render scrollbar box
-        bresenham(SCRN_WIDTH, 0, SCRN_WIDTH, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
-        bresenham(SCRN_WIDTH-20, 0, SCRN_WIDTH-20, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
-        bresenham(SCRN_WIDTH, SCRN_HEIGHT, SCRN_WIDTH-20, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
+        // bresenham(SCRN_WIDTH, 0, SCRN_WIDTH, SCRN_HEIGHT, rgb, framebuffer, vinfo, finfo);
+        bresenham(SCRN_WIDTH-20, 0, SCRN_WIDTH-20, SCRN_HEIGHT-20, rgb, framebuffer, vinfo, finfo);
+        bresenham(SCRN_WIDTH, SCRN_HEIGHT-21, SCRN_WIDTH-20, SCRN_HEIGHT-21, rgb, framebuffer, vinfo, finfo);
         bresenham(SCRN_WIDTH-20, 0, SCRN_WIDTH, 0, rgb, framebuffer, vinfo, finfo);
 
         //Render inner scrollbar
         
-        int barWidth = (SCRN_HEIGHT - 20)/ viewWidth * (SCRN_HEIGHT - 20);
+        float temp =  (float) (SCRN_HEIGHT - 20)/ (float) viewWidth;
+        int barWidth = (int) (temp * (float) (SCRN_HEIGHT - 20));
 
-        int offsetBar = (0 - getYMin(line, polygon)) / viewWidth * (SCRN_HEIGHT - 20);
+        temp = (float) getYMin(line, polygon)/ (float) viewWidth;
+        int offsetBar = 0 -  (int)( temp * (float) (SCRN_HEIGHT - 20));
+        if (offsetBar < 0) {
+            offsetBar = 0;
+        }
 
         bresenham(SCRN_WIDTH-20, offsetBar, SCRN_WIDTH, offsetBar, rgb, framebuffer, vinfo, finfo);
         bresenham(SCRN_WIDTH-20, offsetBar+barWidth, SCRN_WIDTH, offsetBar+barWidth, rgb, framebuffer, vinfo, finfo);

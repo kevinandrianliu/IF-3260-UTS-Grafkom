@@ -6,7 +6,7 @@
 using namespace std;
 
 #define SCRN_WIDTH 1024
-#define SCRN_HEIGHT 762
+#define SCRN_HEIGHT 768
 
 /** VECTOR PROCESSING FUNCTION **/
 void addLine(vector<Line *> *line, Line *l);
