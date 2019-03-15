@@ -10,7 +10,9 @@ using namespace std;
 // **** BRESENHAM ****
 
 // Draws a line between two points with Bresenham algorithm
-void bresenham(int x0, int y0, int x1, int y1, struct RGB rgb, char colorful, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo){
+void bresenham(int x0, int y0, int x1, int y1, struct RGB rgb, int dash, int thickness, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo){
+	int counter = 0;
+	bool draw = true;
     // Swaps the points if first point is on the right of second point
     if (x0 > x1){
         int x_temp;
@@ -26,11 +28,26 @@ void bresenham(int x0, int y0, int x1, int y1, struct RGB rgb, char colorful, ch
 
     // Checks if the points make vertical line
     if ((x1 - x0) == 0){
-        for (int y = y0; y <= y1; y++){
-            long int mem_location = (x1 + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y + vinfo.yoffset) * finfo.line_length;
-
-            pixelColor(rgb,framebuffer,mem_location);
-        }
+		int xmin = x1-thickness < 0? 0:x1-thickness;
+		int xmax = x1+thickness > 1024? 1024:x1+thickness; 
+		for (int i = xmin; i < xmax; i++){ 
+		    for (int y = y0; y <= y1; y++){
+				if(dash!=0){
+					counter++;
+				    long int mem_location = (i + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y + vinfo.yoffset) * finfo.line_length;
+		            if(draw){
+		    			pixelColor(rgb,framebuffer,mem_location);
+					}
+					if(counter % dash == 0){
+						draw = !draw;
+					}
+				}
+				else {
+					long int mem_location = (i + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y + 	vinfo.yoffset) * finfo.line_length;
+					pixelColor(rgb,framebuffer,mem_location);
+				}
+		    }
+		}
     } else {
         float gradien = (y1 - y0)/(x1 - x0);
         if ((abs(gradien) >= 0) && (abs(gradien) <= 1)){
@@ -42,9 +59,24 @@ void bresenham(int x0, int y0, int x1, int y1, struct RGB rgb, char colorful, ch
                 int dx = x1 - x0;
                 int dy = y1 - y0;
                 for (int x = x0; x <= x1; x++){
-                    long int mem_location = (x + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y + vinfo.yoffset) * finfo.line_length;
-
-                    pixelColor(rgb,framebuffer,mem_location);
+					int xmin = x-thickness < 0? 0:x-thickness;
+					int xmax = x+thickness > 1024? 1024:x+thickness;
+					for (int i = xmin; i < xmax ; i++){
+						if(dash!=0){
+							counter++;
+							long int mem_location = (i + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y + vinfo.yoffset) * finfo.line_length;
+					        if(draw){
+								pixelColor(rgb,framebuffer,mem_location);
+							}
+							if(counter % dash == 0){
+								draw = !draw;
+							}
+						}
+						else {
+							long int mem_location = (i + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y + 	vinfo.yoffset) * finfo.line_length;
+							pixelColor(rgb,framebuffer,mem_location);
+						}
+					}
 
                     eps += dy;
                     if ((eps << 1) >= dx){
@@ -56,10 +88,24 @@ void bresenham(int x0, int y0, int x1, int y1, struct RGB rgb, char colorful, ch
                 int dx = x1 - x0;
                 int dy = y0 - y1;
                 for (int x = x0; x <= x1; x++){
-                    long int mem_location = (x + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y + vinfo.yoffset) * finfo.line_length;
-
-                    pixelColor(rgb,framebuffer,mem_location);
-
+					int xmin = x-thickness < 0? 0:x-thickness;
+					int xmax = x+thickness > 1024? 1024:x+thickness;
+					for (int i = xmin; i < xmax ; i++){
+						if(dash!=0){
+							counter++;
+							long int mem_location = (i + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y + vinfo.yoffset) * finfo.line_length;
+					        if(draw){
+								pixelColor(rgb,framebuffer,mem_location);
+							}
+							if(counter % dash == 0){
+								draw = !draw;
+							}
+						}
+						else {
+							long int mem_location = (i + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y + 	vinfo.yoffset) * finfo.line_length;
+							pixelColor(rgb,framebuffer,mem_location);
+						}
+					}
                     eps += dy;
                     if ((eps << 1) >= dx){
                         y--;
@@ -77,10 +123,24 @@ void bresenham(int x0, int y0, int x1, int y1, struct RGB rgb, char colorful, ch
                 int dy = y1 - y0;
 
                 for (int y = y0; y <= y1; y++){
-                    long int mem_location = (x + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y + vinfo.yoffset) * finfo.line_length;
-
-                    pixelColor(rgb,framebuffer,mem_location);
-
+					int xmin = x-thickness < 0? 0:x-thickness;
+					int xmax = x+thickness > 1024? 1024:x+thickness;
+					for (int i = xmin; i < xmax ; i++){
+						if(dash!=0){
+							counter++;
+							long int mem_location = (i + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y + vinfo.yoffset) * finfo.line_length;
+					        if(draw){
+								pixelColor(rgb,framebuffer,mem_location);
+							}
+							if(counter % dash == 0){
+								draw = !draw;
+							}
+						}
+						else {
+							long int mem_location = (i + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y + 	vinfo.yoffset) * finfo.line_length;
+							pixelColor(rgb,framebuffer,mem_location);
+						}
+					}
                     eps += dx;
                     if ((eps << 1) >= dy){
                         x++;
@@ -90,12 +150,26 @@ void bresenham(int x0, int y0, int x1, int y1, struct RGB rgb, char colorful, ch
             } else {    //y1 < y0
                 int dx = x1 - x0;
                 int dy = y0 - y1;
-
+				
                 for (int y = y0; y >= y1; y--){
-                    long int mem_location = (x + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y + vinfo.yoffset) * finfo.line_length;
-
-                    pixelColor(rgb,framebuffer,mem_location);
-
+					int xmin = x-thickness < 0? 0:x-thickness;
+					int xmax = x+thickness > 1024? 1024:x+thickness;
+					for (int i = xmin; i < xmax ; i++){
+						if(dash!=0){
+							counter++;
+							long int mem_location = (i + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y + vinfo.yoffset) * finfo.line_length;
+					        if(draw){
+								pixelColor(rgb,framebuffer,mem_location);
+							}
+							if(counter % dash == 0){
+								draw = !draw;
+							}
+						}
+						else {
+							long int mem_location = (i + vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (y + 	vinfo.yoffset) * finfo.line_length;
+							pixelColor(rgb,framebuffer,mem_location);
+						}
+					}
                     eps += dx;
                     if ((eps << 1) >= dy){
                         x++;
@@ -187,4 +261,3 @@ void clear_screen(unsigned int x_size, unsigned int y_size, char * framebuffer, 
         }
     }
 }
-
