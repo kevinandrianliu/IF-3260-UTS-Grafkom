@@ -244,7 +244,7 @@ int main(int argc, char** argv){
         // Mapping failed
         exit(4);
     }
-	const char *dev = "/dev/input/event2";
+	const char *dev = "/dev/input/event4";
     int fd = open(dev, O_RDONLY);
     if (fd == -1) {
         fprintf(stderr, "Cannot open %s: %s.\n", dev, strerror(errno));
@@ -404,19 +404,233 @@ int main(int argc, char** argv){
                 }
                 refresh_screen = true;
             } else if (menu_bar_selection == 2){
+                WINDOW * window = newwin(10,40,max_y_screen/2-5,max_x_screen/2-20);
+                char dummy[100];
+                char P1[20];
+                char P2[20];
+                memset(P1, '\0', 20);
+                memset(P2, '\0', 20);
+
+                box(window,0,0);
+                wbkgd(window,COLOR_PAIR(1));
+
+                wrefresh(window);
+                mvscanw(30,30,dummy);
+
+                echo();
                 switch(menu_bar_option_selection){
                     case 0:
-                        // COLOR
+                        if (selected_line != nullptr){
+                            key_code = 0x00;
+                            int selection = 0;
+                            char * colors[8];
+                            colors[0] = "Green";
+                            colors[1] = "White";
+                            colors[2] = "Yellow";
+                            colors[3] = "Red";
+                            colors[4] = "Magenta";
+                            colors[5] = "Purple";
+                            colors[6] = "Light Blue";
+                            colors[7] = "Orange";
+                            
+                            bool exit_from_loop = false;
+                            struct RGB rgb;
+
+                            while(1){
+                                werase(window);
+                                mvwprintw(window,3,3,"Color: ");
+                                mvwprintw(window,3,10,colors[selection]);
+                                switch(key_code){
+                                    case(105):
+                                    {
+                                        selection--;
+
+                                        if (selection <= 0)
+                                            selection = 1;
+                                        key_code = 0x00;
+                                        break;
+                                    }
+                                    case(106):
+                                    {
+                                        selection++;
+
+                                        if (selection >= 7)
+                                            selection = 7;
+                                        key_code = 0x00;
+                                        break;
+                                    }
+                                    case(28):
+                                    {
+                                        exit_from_loop = true;
+                                        key_code = 0x00;
+                                        break;
+                                    }
+                                    default:
+                                        key_code = 0x00;
+                                        break;
+                                }
+                                wrefresh(window);
+
+                                switch(selection){
+                                    case(0):
+                                        rgb.r = 0;
+                                        rgb.g = 255;
+                                        rgb.b = 0;
+                                        break;
+                                    case(1):
+                                        rgb.r = 255;
+                                        rgb.g = 255;
+                                        rgb.b = 255;
+                                        break;
+                                    case(2):
+                                        rgb.r = 255;
+                                        rgb.g = 255;
+                                        rgb.b = 0;
+                                        break;
+                                    case(3):
+                                        rgb.r = 255;
+                                        rgb.g = 0;
+                                        rgb.b = 0;
+                                        break;
+                                    case(4):
+                                        rgb.r = 255;
+                                        rgb.g = 0;
+                                        rgb.b = 255;
+                                        break;
+                                    case(5):
+                                        rgb.r = 128;
+                                        rgb.g = 0;
+                                        rgb.b = 128;
+                                        break;
+                                    case(6):
+                                        rgb.r = 64;
+                                        rgb.g = 224;
+                                        rgb.b = 208;
+                                        break;
+                                    case(7):
+                                        rgb.r = 255;
+                                        rgb.g = 99;
+                                        rgb.b = 71;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                if (exit_from_loop)
+                                    break;
+                            }
+
+                            selected_line->setRGB(rgb);
+                        }
                         break;
                     case 1:
-                        // LINE THICKNESS
+                        if (selected_line != nullptr){
+                            key_code = 0x00;
+                            int thickness = selected_line->getThickness();
+                            char thickness_string[2];
+                            bool exit_from_loop = false;
+
+                            while(1){
+                                werase(window);
+                                mvwprintw(window,3,3,"Thickness: ");
+                                sprintf(thickness_string,"%d",thickness);
+                                mvwprintw(window,3,14,thickness_string);
+                                switch(key_code){
+                                    case(105):
+                                    {
+                                        thickness--;
+
+                                        if (thickness <= 1)
+                                            thickness = 1;
+                                        key_code = 0x00;
+                                        break;
+                                    }
+                                    case(106):
+                                    {
+                                        thickness++;
+
+                                        if (thickness >= 3)
+                                            thickness = 3;
+                                        key_code = 0x00;
+                                        break;
+                                    }
+                                    case(28):
+                                    {
+                                        exit_from_loop = true;
+                                        key_code = 0x00;
+                                        break;
+                                    }
+                                    default:
+                                        key_code = 0x00;
+                                        break;
+                                }
+                                wrefresh(window);
+
+                                if (exit_from_loop)
+                                    break;
+                            }
+
+                            selected_line->setThickness(thickness);
+                        }
                         break;
                     case 2:
-                        // LINE STYLE
+                        if (selected_line != nullptr){
+                            key_code = 0x00;
+                            int dash = selected_line->getDash();
+                            char dash_string[2];
+                            bool exit_from_loop = false;
+
+                            while(1){
+                                werase(window);
+                                mvwprintw(window,3,3,"Dash: ");
+                                sprintf(dash_string,"%d",dash);
+                                mvwprintw(window,3,9,dash_string);
+                                switch(key_code){
+                                    case(105):
+                                    {
+                                        dash--;
+
+                                        if (dash <= 0)
+                                            dash = 0;
+                                        key_code = 0x00;
+                                        break;
+                                    }
+                                    case(106):
+                                    {
+                                        dash++;
+
+                                        if (dash >= 5)
+                                            dash = 5;
+                                        key_code = 0x00;
+                                        break;
+                                    }
+                                    case(28):
+                                    {
+                                        exit_from_loop = true;
+                                        key_code = 0x00;
+                                        break;
+                                    }
+                                    default:
+                                        key_code = 0x00;
+                                        break;
+                                }
+                                wrefresh(window);
+
+                                if (exit_from_loop)
+                                    break;
+                            }
+
+                            selected_line->setDash(dash);
+                        }
                         break;
                     default:
                         break;
                 }
+                noecho();
+
+                wbkgd(window,COLOR_BLACK);
+                wclear(window);
+                wrefresh(window);
+                
             } else if (menu_bar_selection == 3){
                 WINDOW * window = newwin(10,40,max_y_screen/2-5,max_x_screen/2-20);
                 char dummy[100];
