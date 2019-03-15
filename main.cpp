@@ -202,77 +202,6 @@ void printToFile(char * filename){
     file.close();
 }
 
-void objects_gui(char selection, int max_x_screen, int max_y_screen, vector<Polygon *> *polygons, vector<Line *> *lines){
-    WINDOW * window = newwin(10,40,max_y_screen/2-5,max_x_screen/2-20);
-    char dummy[100];
-    char P1[20];
-    char P2[20];
-    memset(P1, '\0', 20);
-    memset(P2, '\0', 20);
-
-    box(window,0,0);
-    wbkgd(window,COLOR_PAIR(1));
-
-    wrefresh(window);
-    mvscanw(30,30,dummy);
-
-    echo();
-    switch(selection){
-        case 0:
-        {
-            mvwprintw(window,3,3,"Point 1: ");
-            mvwprintw(window,5,3,"Point 2: ");
-            wattron(window,A_REVERSE);
-            mvwprintw(window,3,12,"            ");
-            mvwprintw(window,5,12,"            ");
-            wrefresh(window);
-            mvwgetstr(window,3,12,P1);
-            mvwgetstr(window,5,12,P2);
-
-            Line * line = parseToLine(P1,P2);
-            (*lines).push_back(line);
-            
-            wattroff(window,A_REVERSE);
-            cout << "Point 1: " << (*line).getP1()->getX() << "," << (*line).getP1()->getY() << endl;
-            cout << "Point 2: " << (*line).getP2()->getX() << "," << (*line).getP2()->getY() << endl;
-            break;
-        }
-        case 1:
-        {   
-            Polygon * polygon = new Polygon();
-            while(true){
-                mvwprintw(window,3,3,"Point: ");
-                wattron(window,A_REVERSE);
-                mvwprintw(window,3,10,"            ");
-                wrefresh(window);
-                mvwgetstr(window,3,10,P1);
-
-                Point * point = new Point(0,0);
-                if (parseToPoint(point,P1)){
-                    polygon->addPoint(point);
-                    wattroff(window,A_REVERSE);
-                } else {
-                    wattroff(window,A_REVERSE);
-                    break;
-                }
-            }
-            polygons->push_back(polygon);
-            break;
-        }
-        case 2:
-            break;
-        case 3:
-            break;
-        default:
-            break;
-    }
-    noecho();
-
-    wbkgd(window,COLOR_BLACK);
-    wclear(window);
-    wrefresh(window);
-}
-
 int main(int argc, char** argv){
     int fbfd;
     struct fb_var_screeninfo vinfo;
@@ -318,10 +247,10 @@ int main(int argc, char** argv){
 
     thread inputter (userInput,fd);
 
-    struct RGB menu_bar_background;
-    menu_bar_background.r = 204;
-    menu_bar_background.g = 204;
-    menu_bar_background.b = 204;
+    struct RGB basic_color;
+    basic_color.r = 255;
+    basic_color.g = 255;
+    basic_color.b = 255;
 
     vector<Line *> line_vector;
     vector<Polygon *> polygon_vector;
@@ -351,6 +280,13 @@ int main(int argc, char** argv){
             clear();
             drawMenuBar(menu_bar_options_window,menu_bar_window);
             refresh_screen = false;
+
+            for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+                (*it)->render(fbp,vinfo,finfo);
+            }
+            for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+                (*it)->render(fbp,vinfo,finfo);
+            }
         }
         
         if (accessing_menu_bar && key_code == 28){
@@ -475,7 +411,7 @@ int main(int argc, char** argv){
                     }
                     case 1:
                     {   
-                        Polygon * polygon = new Polygon();
+                        Polygon * polygon = new Polygon(basic_color);
                         while(true){
                             mvwprintw(window,3,3,"Point: ");
                             wattron(window,A_REVERSE);
@@ -610,30 +546,11 @@ int main(int argc, char** argv){
             }
 
             key_code = 0x00;
-
-            // for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
-            //     (*it)->render(fbp,vinfo,finfo);
-            // }
-            // for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
-            //     (*it)->render(fbp,vinfo,finfo);
-            // }
-
-            if (selected_line != nullptr){
-                ofstream file;
-                file.open("lines.txt");
-
-                file << selected_line->getP1()->getX() << "|" << selected_line->getP1()->getY() << endl;
-                file << selected_line->getP2()->getX() << "|" << selected_line->getP2()->getY() << endl;
-
-                file.close();
+            for (vector<Polygon *>::iterator it = polygon_vector.begin(); it != polygon_vector.end(); it++){
+                (*it)->render(fbp,vinfo,finfo);
             }
-            if (selected_polygon != nullptr){
-                ofstream file;
-                file.open("polygons.txt");
-
-                file << "OK";
-
-                file.close();
+            for (vector<Line *>::iterator it = line_vector.begin(); it != line_vector.end(); it++){
+                (*it)->render(fbp,vinfo,finfo);
             }
         }
 

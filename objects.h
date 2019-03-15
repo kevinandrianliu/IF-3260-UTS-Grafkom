@@ -46,7 +46,7 @@ class Line : public Object {
 
 class Polygon : public Object {
     public:
-        Polygon();
+        Polygon(struct RGB rgb);
         ~Polygon();
 
         vector<Point *> getPointVector();

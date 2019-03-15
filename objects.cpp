@@ -87,8 +87,8 @@ void Line::pan(int direction){
 
 // **** POLYGON CLASS ****
 
-Polygon::Polygon() : Object(){
-    
+Polygon::Polygon(struct RGB rgb) : Object(){
+    this->rgb = rgb;
 }
 Polygon::~Polygon(){
     for (vector<Point *>::iterator it = point_vector.begin(); it != point_vector.end(); it++){
@@ -113,9 +113,12 @@ void Polygon::addPoint(Point * P){
     point_vector.push_back(P);
 }
 void Polygon::render(char* fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo){
-    for (int i = 1; i < point_vector.size(); i++){
+    int i;
+
+    for (i = 1; i < point_vector.size(); i++){
         bresenham(point_vector[i]->getX(),point_vector[i]->getY(),point_vector[i]->getX(),point_vector[i]->getY(),rgb,fbp,vinfo,finfo);
     }
+    bresenham(point_vector[i-1]->getX(),point_vector[i-1]->getY(),point_vector[0]->getX(),point_vector[0]->getY(),rgb,fbp,vinfo,finfo);
 }
 
 void Polygon::zoomIn(int k){
