@@ -24,4 +24,8 @@ int getXMax(vector<Line *> *line, vector<Polygon *> *polygon);
 void renderHorizontalBar(vector<Line *> *line, vector<Polygon *> *polygon, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
 void renderVerticalBar(vector<Line *> *line, vector<Polygon *> *polygon, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
 
+/** STRING PARSING **/
+Line* parseToLine(char * P1, char * P2);
+bool parseToPoint(Point * point, char *P);
+
 #endif

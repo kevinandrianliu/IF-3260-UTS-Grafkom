@@ -1,5 +1,8 @@
 #include "objects_util.h"
 #include <iostream>
+#include <fstream>
+#include <ncurses.h>
+
 using namespace std;
 
 
@@ -7,18 +10,8 @@ void addLine(vector<Line *> *line, Line *l) {
     line->push_back(l);
 }
 
-void addPolygon(vector<Polygon *> *polygon) {
-    int a, b;
-    polygon->push_back(new Polygon);
-    Polygon *p = polygon->back();
-    cout << "Input points, end with negative number:" << endl;
-    do {
-        cin >> a;
-        cin >> b;
-        if ((a > 0) && (b > 0)) {
-            p->addPoint(new Point(a,b));
-        }
-    } while ((a > 0) && (b > 0));
+void addPolygon(vector<Polygon *> *polygon, Polygon *p) {
+    polygon->push_back(p);
 }
 
 Line* selectLine(vector<Line *> *line, int i) {
@@ -176,4 +169,53 @@ void renderVerticalBar(vector<Line *> *line, vector<Polygon *> *polygon, struct 
 
     bresenham(SCRN_WIDTH-20, offsetBar, SCRN_WIDTH, offsetBar, rgb, 0, framebuffer, vinfo, finfo);
     bresenham(SCRN_WIDTH-20, offsetBar+barWidth, SCRN_WIDTH, offsetBar+barWidth, rgb, 0, framebuffer, vinfo, finfo);
+}
+
+Line* parseToLine(char * P1, char * P2){
+    int P1_x, P1_y, P2_x, P2_y;
+    string P1_string(P1);
+    string P2_string(P2);
+    string delimiter = ",";
+
+    int start = 0;
+    int end = P1_string.find(delimiter);
+    P1_x = stoi(P1_string.substr(start, end - start));
+    start = end + delimiter.length();
+    end = P1_string.find(delimiter, start);
+    P1_y = stoi(P1_string.substr(start, end));
+
+    start = 0;
+    end = P2_string.find(delimiter);
+    P2_x = stoi(P2_string.substr(start, end - start));
+    start = end + delimiter.length();
+    end = P2_string.find(delimiter, start);
+    P2_y = stoi(P2_string.substr(start, end));
+
+    Line * line = new Line(new Point(P1_x,P1_y), new Point(P2_x,P2_y));
+
+    return line;
+}
+
+bool parseToPoint(Point * point, char *P){
+    string stop_condition("-999,-999");
+    string P_string(P);
+
+    if (stop_condition.compare(P_string) == 0){
+        return false;
+    } else {
+        int P_x, P_y;
+        string delimiter(",");
+
+        int start = 0;
+        int end = P_string.find(delimiter);
+        P_x = stoi(P_string.substr(start, end - start));
+        start = end + delimiter.length();
+        end = P_string.find(delimiter, start);
+        P_y = stoi(P_string.substr(start, end));
+
+        point->setX(P_x);
+        point->setY(P_y);
+
+        return true;
+    }
 }
