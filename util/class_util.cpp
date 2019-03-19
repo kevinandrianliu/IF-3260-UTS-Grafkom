@@ -3,6 +3,4 @@
 using namespace std;
 
 Object::Object() { };
-Object::~Object() {
-    cout << "Object destructor" << endl;
-};
+Object::~Object() {};
