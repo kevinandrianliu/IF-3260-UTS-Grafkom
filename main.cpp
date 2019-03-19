@@ -334,7 +334,7 @@ int main(int argc, char** argv){
                         wattron(window,A_REVERSE);
                         mvwprintw(window,5,2,"                                    ");
                         wrefresh(window);
-                        mvwscanw(window,5,2,test);
+                        mvwgetstr(window,5,2,test);
                         wattroff(window,A_REVERSE);
 
                         clearVector(&line_vector, &polygon_vector);
@@ -344,8 +344,10 @@ int main(int argc, char** argv){
                         wattron(window,A_REVERSE);
                         mvwprintw(window,5,2,"                                    ");
                         wrefresh(window);
-                        mvwscanw(window,5,2,test);
+                        mvwgetstr(window,5,2,test);
                         wattroff(window,A_REVERSE);
+                        
+                        polygon_vector = load_polygons(test);
                         break;
                     }
                     case(2):    // SAVE
@@ -354,17 +356,19 @@ int main(int argc, char** argv){
                         wattron(window,A_REVERSE);
                         mvwprintw(window,5,2,"                                    ");
                         wrefresh(window);
-                        mvwscanw(window,5,2,test);
+                        mvwgetstr(window,5,2,test);
                         wattroff(window,A_REVERSE);
 
-                        save_lines(line_vector,test);
+                        save_lines(&line_vector,test);
 
                         mvwprintw(window,3,13,"Enter filename for polygon");
                         wattron(window,A_REVERSE);
                         mvwprintw(window,5,2,"                                    ");
                         wrefresh(window);
-                        mvwscanw(window,5,2,test);
+                        mvwgetstr(window,5,2,test);
                         wattroff(window,A_REVERSE);
+
+                        save_polygons(&polygon_vector,test);
 
                         break;
                     }

@@ -1,14 +1,15 @@
 #include "file.h"
 #include <fstream>
 #include <cstring>
+#include <iostream>
 
 using namespace std;
 
-void save_lines(vector<Line* > lines, char * filename) {
+void save_lines(vector<Line* > *lines, char * filename) {
 
     ofstream fout(filename, ios_base::out | ios_base::binary);
     
-    for (vector<Line *>::iterator it = lines.begin(); it != lines.end(); it++){
+    for (vector<Line *>::iterator it = (*lines).begin(); it != (*lines).end(); it++){
 		RGB rgb = (*it)->getRGB();
 		int dash = (*it)->getDash();
 		int thickness = (*it)->getThickness();
@@ -19,17 +20,19 @@ void save_lines(vector<Line* > lines, char * filename) {
     fout.close();
 }
 
-void save_polygons(vector<Polygon* > polygons, char * filename) {
+void save_polygons(vector<Polygon* > *polygons, char * filename) {
+    struct RGB rgb;
 
     ofstream fout(filename);
-    for (vector<Polygon *>::iterator it = polygons.begin(); it != polygons.end(); it++) {
+    for (vector<Polygon *>::iterator it = (*polygons).begin(); it != (*polygons).end(); it++) {
 
         vector <Point*> pts = (*it)->getPointVector();
         for (vector<Point *>::iterator it2 = pts.begin(); it2 != pts.end(); it2++) {
             fout << (*it2)->getX() << ',' << (*it2)->getY();
-	    if(it2 != pts.end()-1) { fout << '|';}
+	    fout << '|';
         }
-	fout << endl;
+        rgb = (*it)->getRGB();
+	    fout << endl << rgb.r << endl << rgb.g << endl << rgb.b << endl;
     }
     fout.close();
 }
@@ -89,10 +92,11 @@ vector<Polygon*> load_polygons(char* filename) {
 	while(getline(fin,data)){
 		Polygon* polygon = new Polygon(rgb);
 		vector<string> points_string;
-		points_string = split(data,"|");
-		for (vector<string>::iterator it = points_string.begin(); it != points_string.end(); it++) {
+
+        points_string = split(data,"|");
+		while (points_string.size() > 1) {
 			char* info;
-			string idx = (*it);
+			string idx = *(points_string.begin());
 			char* writable = new char[idx.length()+1];
 			strcpy(writable, idx.c_str());
 			writable[idx.length()] = '\0';
@@ -105,7 +109,17 @@ vector<Polygon*> load_polygons(char* filename) {
 			Point* point = new Point(stoi(xy[0]),stoi(xy[1]));
 			polygon->addPoint(point);
 			delete [] writable;
-		} 
+
+            points_string = split(*(points_string.end()-1),"|");
+		}
+
+        getline(fin,data);
+        rgb.r = data.c_str()[0];
+        getline(fin,data);
+        rgb.g = data.c_str()[0];
+        getline(fin,data);
+        rgb.b = data.c_str()[0];
+        polygon->setRGB(rgb);
 		polygons.push_back(polygon);
 	}	
 	
