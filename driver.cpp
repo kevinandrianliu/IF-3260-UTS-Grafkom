@@ -2,7 +2,11 @@
 #include <fstream>
 #include <string>
 #include <cstring>
+<<<<<<< HEAD
 #include <string.h>
+=======
+#include <iostream>
+>>>>>>> 15b658d8233eeac1edcd8263c581280501901d10
 #include "objects.h"
 using namespace std;
 
@@ -19,7 +23,11 @@ vector<string> split(string str, string tok);
 
 int main(int argc, char** argv){
 
+<<<<<<< HEAD
     vector<Line* > lines;
+=======
+    vector<Line* > lines, lines2;
+>>>>>>> 15b658d8233eeac1edcd8263c581280501901d10
     vector<Polygon* > polygons;
 
     Line* line = new Line(new Point(100,100),new Point(200,200));
@@ -56,13 +64,25 @@ int main(int argc, char** argv){
     save_lines(lines);
     save_polygons(polygons);
 
+<<<<<<< HEAD
+=======
+    lines2 = load_lines("lines.txt");
+    for (vector<Line *>::iterator it = lines.begin(); it != lines.end(); it++){
+	cout << (*it)->getP1().getX() << "," << (*it)->getP2().getY() << endl;
+    }
+
+>>>>>>> 15b658d8233eeac1edcd8263c581280501901d10
     return 0;
 }
 
 
 void save_lines(vector<Line* > lines) {
 
+<<<<<<< HEAD
     ofstream fout("lines.txt");
+=======
+    ofstream fout("lines.txt", ios_base::out | ios_base::binary);
+>>>>>>> 15b658d8233eeac1edcd8263c581280501901d10
     
     for (vector<Line *>::iterator it = lines.begin(); it != lines.end(); it++){
 	RGB rgb = (*it)->getRGB();
@@ -90,30 +110,62 @@ void save_polygons(vector<Polygon* > polygons) {
     fout.close();
 }
 
+<<<<<<< HEAD
 vector<Line*> load_lines(string filename) {
+=======
+vector<Line*> load_lines(char* filename) {
+>>>>>>> 15b658d8233eeac1edcd8263c581280501901d10
 	vector<Line*> lines;
 	ifstream fin(filename);
 	string data;
 	while(getline(fin,data)){
 		char* info;
 		vector<string> datas;
+<<<<<<< HEAD
 		info = strtok(data," ,|\n");
+=======
+		char* writable = new char[data.length()+1];
+		strcpy(writable, data.c_str());
+		writable[data.length()] = '\0';
+		info = strtok(writable," ,|\n");
+
+>>>>>>> 15b658d8233eeac1edcd8263c581280501901d10
 		while(info!=NULL) {
 			datas.push_back(string(info));
 			info = strtok(NULL," ,|\n");
 		}
+<<<<<<< HEAD
+=======
+		delete [] writable;
+		
+>>>>>>> 15b658d8233eeac1edcd8263c581280501901d10
 		int point1x = stoi(datas[0]);
 		int point1y = stoi(datas[1]);
 		int point2x = stoi(datas[2]);
 		int point2y = stoi(datas[3]);
 		Line* line = new Line(new Point(point1x,point1y),new Point(point2x,point2y));
+<<<<<<< HEAD
 		RGB rgb = {datas[4], datas[5],datas[6]};
+=======
+
+		char* r = new char[datas[4].length()+1];
+		char* g = new char[datas[5].length()+1];
+		char* b = new char[datas[6].length()+1];
+		strcpy(r, datas[4].c_str());
+		strcpy(g, datas[5].c_str());
+		strcpy(b, datas[6].c_str());
+		r[datas[4].length()] = '\0';
+		g[datas[5].length()] = '\0';
+		b[datas[6].length()] = '\0';
+		RGB rgb = {r[0], g[0],b[0]};
+>>>>>>> 15b658d8233eeac1edcd8263c581280501901d10
 		int dash = stoi(datas[7]);
 		int thick = stoi(datas[8]);
 		line->setRGB(rgb);
     		line->setDash(dash);
     		line->setThickness(thick);
     		lines.push_back(line);
+<<<<<<< HEAD
 	
 	}
 	
@@ -121,6 +173,16 @@ vector<Line*> load_lines(string filename) {
 }
 
 vector<Polygon*> load_polygons(string filename) {
+=======
+		delete [] r; delete [] g; delete [] b;
+	
+	}
+	fin.close();
+	return lines;
+}
+
+vector<Polygon*> load_polygons(char* filename) {
+>>>>>>> 15b658d8233eeac1edcd8263c581280501901d10
 	vector<Polygon*> polygons;
 	ifstream fin(filename);
 	string data;
@@ -132,7 +194,14 @@ vector<Polygon*> load_polygons(string filename) {
 		for (vector<string>::iterator it = points_string.begin(); it != points_string.end(); it++) {
 			char* info;
 			string idx = (*it);
+<<<<<<< HEAD
 			info = strtok(idx,",\n");
+=======
+			char* writable = new char[idx.length()+1];
+			strcpy(writable, idx.c_str());
+			writable[idx.length()] = '\0';
+			info = strtok(writable,",\n");
+>>>>>>> 15b658d8233eeac1edcd8263c581280501901d10
 			vector<string> xy;
 			while(info!=NULL) {
 				xy.push_back(string(info));
@@ -140,10 +209,19 @@ vector<Polygon*> load_polygons(string filename) {
 			}
 			Point* point = new Point(stoi(xy[0]),stoi(xy[1]));
 			polygon->addPoint(point);
+<<<<<<< HEAD
 		} 
 		polygons.push_back(polygon);
 	}	
 
+=======
+			delete [] writable;
+		} 
+		polygons.push_back(polygon);
+	}	
+	
+	fin.close();
+>>>>>>> 15b658d8233eeac1edcd8263c581280501901d10
 	return polygons;
 }
 
