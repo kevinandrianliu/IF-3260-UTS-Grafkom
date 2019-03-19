@@ -2,6 +2,7 @@
 #define __FUNC_UTIL_HPP__
 
 #include <linux/fb.h>
+#include <vector>
 
 using namespace std;
 
@@ -13,10 +14,7 @@ struct RGB {
 
 void clear_screen(unsigned int x_size, unsigned int y_size, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
 
-<<<<<<< HEAD
 void bresenham(int x0, int y0, int x1, int y1, struct RGB rgb, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
-=======
->>>>>>> 15b658d8233eeac1edcd8263c581280501901d10
 void bresenham(int x0, int y0, int x1, int y1, struct RGB rgb, int dash, int thickness, char * framebuffer, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
 
 void pixelColor(struct RGB rgb, char *fbp, long int location);
@@ -24,6 +22,5 @@ void pixelColor(struct RGB rgb, char *fbp, long int location);
 char checkPixelAround(int x, int y, char * fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
 
 void rasterScan(int x_min, int y_min, int x_max, int y_max, struct RGB rgb, char * fbp, struct fb_var_screeninfo vinfo, struct fb_fix_screeninfo finfo);
-
 
 #endif

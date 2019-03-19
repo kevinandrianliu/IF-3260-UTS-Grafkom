@@ -1,69 +1,12 @@
-#include <unistd.h>
+#include "file.h"
 #include <fstream>
-#include <string>
 #include <cstring>
-#include <iostream>
-#include "objects.h"
+
 using namespace std;
 
-void save_lines(vector<Line*> lines);
-void save_polygons(vector<Polygon*> polygons);
-vector<Line*> load_lines(char* filename);
-vector<Polygon*> load_polygons(char* filename);
-vector<string> split(string str, string tok);
+void save_lines(vector<Line* > lines, char * filename) {
 
-
-int main(int argc, char** argv){
-
-    vector<Line* > lines, lines2;
-    vector<Polygon* > polygons;
-
-    Line* line = new Line(new Point(100,100),new Point(200,200));
-    line->setRGB({100,100,100});
-    line->setDash(0);
-    line->setThickness(5);
-    lines.push_back(line);
-
-    Line* line2 = new Line(new Point(50,100),new Point(50,200));
-    line2->setRGB({50,50,50});
-    line2->setDash(3);
-    line2->setThickness(5);
-    lines.push_back(line2);
-    //lines.push_back(new Line(new Point(1,1),new Point(2,2)));
-
-    Polygon* polygon = new Polygon();
-    polygon->addPoint(new Point(100,100));
-    polygon->addPoint(new Point(200,200));
-    polygon->addPoint(new Point(300,300));
-    polygons.push_back(polygon);
-
-    Polygon* polygon2 = new Polygon;
-    polygon2->addPoint(new Point(110,110));
-    polygon2->addPoint(new Point(220,220));
-    polygon2->addPoint(new Point(330,330));
-    polygons.push_back(polygon2);
-
-    // polygon.addPoint(new Point(100,100));
-    // polygon.addPoint(new Point(200,200));
-    // polygon.addPoint(new Point(300,300));
-
-    // polygon.render(fbp,vinfo,finfo);
-
-    save_lines(lines);
-    save_polygons(polygons);
-
-    lines2 = load_lines("lines.txt");
-    for (vector<Line *>::iterator it = lines.begin(); it != lines.end(); it++){
-	cout << (*it)->getP1()->getX() << "," << (*it)->getP2()->getY() << endl;
-    }
-
-    return 0;
-}
-
-
-void save_lines(vector<Line* > lines) {
-
-    ofstream fout("lines.txt", ios_base::out | ios_base::binary);
+    ofstream fout(filename, ios_base::out | ios_base::binary);
     
     for (vector<Line *>::iterator it = lines.begin(); it != lines.end(); it++){
 		RGB rgb = (*it)->getRGB();
@@ -76,9 +19,9 @@ void save_lines(vector<Line* > lines) {
     fout.close();
 }
 
-void save_polygons(vector<Polygon* > polygons) {
+void save_polygons(vector<Polygon* > polygons, char * filename) {
 
-    ofstream fout("polygons.txt");
+    ofstream fout(filename);
     for (vector<Polygon *>::iterator it = polygons.begin(); it != polygons.end(); it++) {
 
         vector <Point*> pts = (*it)->getPointVector();
@@ -142,8 +85,9 @@ vector<Polygon*> load_polygons(char* filename) {
 	vector<Polygon*> polygons;
 	ifstream fin(filename);
 	string data;
+    struct RGB rgb {0,0,0};
 	while(getline(fin,data)){
-		Polygon* polygon = new Polygon();
+		Polygon* polygon = new Polygon(rgb);
 		vector<string> points_string;
 		points_string = split(data,"|");
 		for (vector<string>::iterator it = points_string.begin(); it != points_string.end(); it++) {
