@@ -90,7 +90,6 @@ void save_polygons(vector<Polygon* > polygons) {
 }
 
 vector<Line*> load_lines(string filename) {
-
 	vector<Line*> lines;
 	ifstream fin(filename);
 	string data;
@@ -101,16 +100,19 @@ vector<Line*> load_lines(string filename) {
 		strcpy(writable, data.c_str());
 		writable[data.length()] = '\0';
 		info = strtok(writable," ,|\n");
+
 		while(info!=NULL) {
 			datas.push_back(string(info));
 			info = strtok(NULL," ,|\n");
 		}
 		delete [] writable;
+		
 		int point1x = stoi(datas[0]);
 		int point1y = stoi(datas[1]);
 		int point2x = stoi(datas[2]);
 		int point2y = stoi(datas[3]);
 		Line* line = new Line(new Point(point1x,point1y),new Point(point2x,point2y));
+
 		char* r = new char[datas[4].length()+1];
 		char* g = new char[datas[5].length()+1];
 		char* b = new char[datas[6].length()+1];
@@ -130,7 +132,6 @@ vector<Line*> load_lines(string filename) {
 		delete [] r; delete [] g; delete [] b;
 	
 	}
-
 	
 	return lines;
 }
@@ -182,4 +183,3 @@ vector<string> split(string str, string tok){
 	}
 	return res;
 }
-
