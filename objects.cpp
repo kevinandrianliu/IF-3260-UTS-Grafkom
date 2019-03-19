@@ -135,7 +135,7 @@ void Polygon::render(char* fbp, struct fb_var_screeninfo vinfo, struct fb_fix_sc
     int i;
 
     for (i = 1; i < point_vector.size(); i++){
-        bresenham(point_vector[i]->getX(),point_vector[i]->getY(),point_vector[i]->getX(),point_vector[i]->getY(),rgb,fbp,vinfo,finfo);
+        bresenham(point_vector[i-1]->getX(),point_vector[i-1]->getY(),point_vector[i]->getX(),point_vector[i]->getY(),rgb,fbp,vinfo,finfo);
     }
     bresenham(point_vector[i-1]->getX(),point_vector[i-1]->getY(),point_vector[0]->getX(),point_vector[0]->getY(),rgb,fbp,vinfo,finfo);
 }

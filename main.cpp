@@ -16,6 +16,7 @@
 #include "util/func_util.h"
 #include "objects.h"
 #include "objects_util.h"
+#include "file.h"
 
 using namespace std;
 
@@ -98,6 +99,18 @@ void userInput(int fd){
             break;
         }
     }
+}
+
+void clearVector(vector<Line *> *line_vector, vector<Polygon *> *polygon_vector){
+    for (vector<Line *>::iterator it = (*line_vector).begin(); it != (*line_vector).end(); it++){
+        delete *it;
+    }
+    (*line_vector).clear();
+
+    for (vector<Polygon *>::iterator it = (*polygon_vector).begin(); it != (*polygon_vector).end(); it++){
+        delete *it;
+    }
+    (*polygon_vector).clear();
 }
 
 void drawMenuBar(WINDOW** menu_bar_options_window,WINDOW * menu_bar_window){  
@@ -313,26 +326,50 @@ int main(int argc, char** argv){
                 echo();
                 switch (menu_bar_option_selection){
                     case(0):    // NEW
+                        clearVector(&line_vector, &polygon_vector);
                         break;
                     case(1):    // OPEN
                     {
-                        mvwprintw(window,3,11,"Enter file to open");
+                        mvwprintw(window,3,11,"Enter line file to open");
                         wattron(window,A_REVERSE);
                         mvwprintw(window,5,2,"                                    ");
                         wrefresh(window);
-                        mvwscanw(window,5,2,test);
+                        mvwgetstr(window,5,2,test);
                         wattroff(window,A_REVERSE);
+
+                        clearVector(&line_vector, &polygon_vector);
+                        line_vector = load_lines(test);
+
+                        mvwprintw(window,3,11,"Enter polygon file to open");
+                        wattron(window,A_REVERSE);
+                        mvwprintw(window,5,2,"                                    ");
+                        wrefresh(window);
+                        mvwgetstr(window,5,2,test);
+                        wattroff(window,A_REVERSE);
+                        
+                        polygon_vector = load_polygons(test);
                         break;
                     }
                     case(2):    // SAVE
                     {
-                        mvwprintw(window,3,13,"Enter filename");
+                        mvwprintw(window,3,13,"Enter filename for line");
                         wattron(window,A_REVERSE);
                         mvwprintw(window,5,2,"                                    ");
                         wrefresh(window);
-                        mvwscanw(window,5,2,test);
-                        printToFile(test);
+                        mvwgetstr(window,5,2,test);
                         wattroff(window,A_REVERSE);
+
+                        save_lines(&line_vector,test);
+
+                        mvwprintw(window,3,13,"Enter filename for polygon");
+                        wattron(window,A_REVERSE);
+                        mvwprintw(window,5,2,"                                    ");
+                        wrefresh(window);
+                        mvwgetstr(window,5,2,test);
+                        wattroff(window,A_REVERSE);
+
+                        save_polygons(&polygon_vector,test);
+
                         break;
                     }
                     case(3):    // EXIT

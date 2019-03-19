@@ -1,6 +1,11 @@
 #include "func_util.h"
+#include "../objects.h"
 #include <cmath>
 #include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <cstring>
 
 using namespace std;
 
