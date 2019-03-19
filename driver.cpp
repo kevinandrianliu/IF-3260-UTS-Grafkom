@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <cstring>
+#include <iostream>
 #include "objects.h"
 using namespace std;
 
@@ -18,7 +19,7 @@ vector<string> split(string str, string tok);
 
 int main(int argc, char** argv){
 
-    vector<Line* > lines;
+    vector<Line* > lines, lines2;
     vector<Polygon* > polygons;
 
     Line* line = new Line(new Point(100,100),new Point(200,200));
@@ -55,6 +56,11 @@ int main(int argc, char** argv){
     save_lines(lines);
     save_polygons(polygons);
 
+    lines2 = load_lines("lines.txt");
+    for (vector<Line *>::iterator it = lines.begin(); it != lines.end(); it++){
+	cout << (*it)->getP1().getX() << "," << (*it)->getP2().getY() << endl;
+    }
+
     return 0;
 }
 
@@ -89,7 +95,7 @@ void save_polygons(vector<Polygon* > polygons) {
     fout.close();
 }
 
-vector<Line*> load_lines(string filename) {
+vector<Line*> load_lines(char* filename) {
 	vector<Line*> lines;
 	ifstream fin(filename);
 	string data;
@@ -132,11 +138,11 @@ vector<Line*> load_lines(string filename) {
 		delete [] r; delete [] g; delete [] b;
 	
 	}
-	
+	fin.close();
 	return lines;
 }
 
-vector<Polygon*> load_polygons(string filename) {
+vector<Polygon*> load_polygons(char* filename) {
 	vector<Polygon*> polygons;
 	ifstream fin(filename);
 	string data;
@@ -163,7 +169,8 @@ vector<Polygon*> load_polygons(string filename) {
 		} 
 		polygons.push_back(polygon);
 	}	
-
+	
+	fin.close();
 	return polygons;
 }
 
